@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ficha Médica Ocupacional</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',system-ui,sans-serif;background:#f8fafc;min-height:100vh;}
+input,textarea,button,select{font-family:'Outfit',system-ui,sans-serif;}
+input:focus,textarea:focus{outline:2px solid #2a7a4b!important;border-color:#2a7a4b!important;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:#f1f5f9;}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+@media print{
+  .np{display:none!important;}
+  body{background:white;}
+  .pwrap{padding:0;background:white;}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef} = React;
+
+// ── GROQ API KEY ── (opcional, para sugerencias IA)
+const GROQ_KEY = ""; // pega aquí tu key de console.groq.com si quieres IA
+
+// ── CIE-10 ──
+const CIE10 = [
+  {c:"M54.5",d:"Lumbago no especificado"},{c:"M54.4",d:"Lumbociática"},{c:"M54.2",d:"Cervicalgia"},
+  {c:"M75.1",d:"Síndrome del manguito rotador"},{c:"M65.3",d:"Dedo en gatillo"},{c:"M77.1",d:"Epicondilitis lateral"},
+  {c:"M77.0",d:"Epicondilitis medial"},{c:"M79.1",d:"Mialgia"},{c:"M51.1",d:"Degeneración disco lumbar"},
+  {c:"M75.0",d:"Capsulitis adhesiva hombro"},{c:"M70.0",d:"Sinovitis crónica mano/muñeca"},
+  {c:"M19.9",d:"Artrosis no especificada"},{c:"M25.5",d:"Dolor articular"},{c:"M62.6",d:"Tensión muscular"},
+  {c:"G56.0",d:"Síndrome túnel carpiano"},{c:"G54.2",d:"Lesión raíces cervicales"},
+  {c:"G57.0",d:"Lesión nervio ciático"},{c:"G43.9",d:"Migraña no especificada"},
+  {c:"J45.9",d:"Asma no especificada"},{c:"J30.1",d:"Rinitis alérgica"},{c:"J41.0",d:"Bronquitis crónica simple"},
+  {c:"J06.9",d:"Infección vías resp. superiores"},{c:"J20.9",d:"Bronquitis aguda"},
+  {c:"I10",d:"Hipertensión esencial"},{c:"I25.1",d:"Cardiopatía aterosclerótica"},
+  {c:"F32.0",d:"Episodio depresivo leve"},{c:"F32.1",d:"Episodio depresivo moderado"},
+  {c:"F41.1",d:"Trastorno ansiedad generalizada"},{c:"F43.2",d:"Trastorno de adaptación"},{c:"F48.0",d:"Neurastenia/Burnout"},
+  {c:"L23.0",d:"Dermatitis alérgica de contacto"},{c:"L24.0",d:"Dermatitis irritante"},
+  {c:"H83.3",d:"Efectos ruido en oído interno"},{c:"H90.3",d:"Hipoacusia neurosensorial bilateral"},
+  {c:"E11.9",d:"Diabetes mellitus tipo 2"},{c:"E78.0",d:"Hipercolesterolemia"},{c:"E66.0",d:"Obesidad"},
+  {c:"E03.9",d:"Hipotiroidismo"},{c:"K29.5",d:"Gastritis crónica"},{c:"K21.0",d:"ERGE con esofagitis"},
+  {c:"S60.0",d:"Contusión de dedo"},{c:"S93.4",d:"Esguince de tobillo"},{c:"S83.6",d:"Esguince de rodilla"},
+  {c:"S40.0",d:"Contusión de hombro"},{c:"S61.0",d:"Herida de dedo"},
+  {c:"T65.9",d:"Efecto tóxico de sustancia"},{c:"T56.0",d:"Efecto tóxico del plomo"},
+  {c:"Z57.0",d:"Exposición laboral al ruido"},{c:"Z57.2",d:"Exposición laboral al polvo"},
+  {c:"Z57.5",d:"Exposición laboral a tóxicos"},{c:"Z57.6",d:"Exposición a temperaturas extremas"},
+  {c:"Z57.7",d:"Exposición laboral a vibraciones"},{c:"Z56.6",d:"Dificultades físicas/mentales en trabajo"},
+];
+
+const RECOM = [
+  {cat:"🦺 EPP",items:[
+    "Uso obligatorio de casco de seguridad durante toda la jornada",
+    "Guantes de protección adecuados al riesgo del puesto",
+    "Protectores auditivos en áreas con ruido superior a 85 dB",
+    "Mascarilla respiratoria N95 en áreas con polvo o químicos",
+    "Calzado de seguridad con punta de acero en toda el área de trabajo",
+    "Gafas de seguridad en actividades con proyección de partículas",
+    "Chaleco reflectivo en áreas de circulación vehicular",
+    "Arnés de seguridad en trabajos en altura mayor a 1.80 m",
+  ]},
+  {cat:"💧 Hidratación",items:[
+    "Consumir mínimo 2 litros de agua durante la jornada laboral",
+    "Hidratarse cada 20-30 minutos en ambientes calurosos",
+    "Evitar bebidas azucaradas o alcohólicas durante la jornada",
+    "Reponer electrolitos en actividades físicas intensas o calor extremo",
+  ]},
+  {cat:"🪑 Ergonomía",items:[
+    "Pausas activas de 5-10 minutos cada 2 horas de trabajo continuo",
+    "Mantener postura correcta: espalda recta, monitor a nivel de ojos",
+    "Alternar posición de pie y sentado durante la jornada",
+    "No levantar cargas mayores a 25 kg sin ayuda mecánica",
+    "Técnica correcta de levantamiento: flexionar rodillas, espalda recta",
+    "Rotar actividades para evitar movimientos repetitivos prolongados",
+  ]},
+  {cat:"📋 Seguimiento",items:[
+    "Control médico ocupacional en 3 meses para evaluación de evolución",
+    "Control médico en 6 meses para exámenes periódicos",
+    "Derivación a especialista para valoración complementaria",
+    "Audiometría de control en 6 meses por exposición a ruido",
+    "Espirometría de control anual por exposición a polvo o químicos",
+    "Exámenes de laboratorio: BHC, glucosa, perfil lipídico en 3 meses",
+  ]},
+  {cat:"🚫 Restricciones",items:[
+    "Restringir levantamiento de cargas mayores a 10 kg por patología lumbar",
+    "Evitar exposición a temperaturas extremas por condición cardiovascular",
+    "No trabajar en alturas hasta nueva evaluación médica",
+    "Evitar exposición a solventes y químicos por sensibilización cutánea",
+    "Restringir trabajo con vibraciones por patología de miembro superior",
+    "Evitar turnos nocturnos por condición de salud actual",
+  ]},
+  {cat:"🧼 Higiene",items:[
+    "Lavado de manos con agua y jabón antes de comer y al finalizar jornada",
+    "Ducharse al finalizar jornada en caso de exposición a químicos o polvo",
+    "No comer ni beber en áreas con exposición a sustancias químicas",
+    "Cambio de ropa de trabajo al finalizar jornada, lavado separado del hogar",
+  ]},
+  {cat:"🧠 Salud Mental",items:[
+    "Pausas de descanso activo durante la jornada para manejo del estrés",
+    "Participar en programa de manejo del estrés laboral de la empresa",
+    "Consulta con psicología ocupacional para evaluación de estrés laboral",
+    "Promover comunicación asertiva con jefaturas para reducir riesgo psicosocial",
+  ]},
+];
+
+const FACTORES = {
+  "FÍSICO":["Temp. altas","Temp. bajas","Rad. Ionizante","Rad. No Ionizante","Ruido","Vibración","Iluminación","Ventilación","Fluido eléctrico"],
+  "MECÁNICOS":["Pinchazos","Cortes","Caída objetos","Caídas mismo nivel","Caídas distinto nivel","Choques vehiculares","Atropellamientos","Proyección fragmentos"],
+  "QUÍMICO":["Polvos","Humos","Líquidos","Vapores","Aerosoles","Gaseosos","Neblinas"],
+  "BIOLÓGICO":["Virus","Bacterias","Hongos","Parásitos","Vectores","Animales selváticos"],
+  "ERGONÓMICO":["Manejo manual cargas","Movim. repetitivos","Posturas forzadas","Trabajo con PVO","Diseño inadecuado puesto"],
+  "PSICOSOCIAL":["Sobrecarga laboral","Monotonía","Alta responsabilidad","Turnos rotativos","Conflicto de rol","Inestabilidad laboral","Amenaza delincuencial"],
+};
+const REGIONES = ["Piel","Ojos","Oído","Orofaringe","Nariz","Cuello","Tórax","Abdomen","Columna","Pelvis","Extremidades","Neurológico"];
+const GS = ["A+","A-","B+","B-","AB+","AB-","O+","O-"];
+const LATERALIDAD = ["Diestro","Zurdo","Ambidiestro"];
+const TIPO_EVAL = ["Ingreso","Periódico","Reingreso","Retiro"];
+const APTITUD_OPTS = ["APTO","APTO EN OBSERVACIÓN","APTO CON LIMITACIONES","NO APTO"];
+
+const ld = (k,d) => { try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;} };
+const sv = (k,v) => { try{localStorage.setItem(k,JSON.stringify(v));}catch{} };
+
+// ── Componentes base ──
+function Chip({label,active,onClick,color="#2a7a4b",size="sm"}) {
+  return <button onClick={onClick} style={{padding:size==="lg"?"9px 20px":"5px 13px",borderRadius:20,fontSize:size==="lg"?14:12,fontWeight:active?700:500,border:`2px solid ${active?color:"#e5e7eb"}`,background:active?color:"#fff",color:active?"#fff":"#4b5563",cursor:"pointer",transition:"all 0.12s"}}>{label}</button>;
+}
+function QS({opts,val,onChange,multi=false,color="#2a7a4b",size="sm"}) {
+  const tog = o => multi ? onChange((val||[]).includes(o)?(val||[]).filter(x=>x!==o):[...(val||[]),o]) : onChange(val===o?"":o);
+  return <div style={{display:"flex",flexWrap:"wrap",gap:6}}>{opts.map(o=><Chip key={o} label={o} active={multi?(val||[]).includes(o):val===o} onClick={()=>tog(o)} color={color} size={size}/>)}</div>;
+}
+function F({label,children,tip}) {
+  return <div style={{marginBottom:10}}>{label&&<div style={{fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"uppercase",letterSpacing:0.6,marginBottom:4}}>{label}{tip&&<span style={{marginLeft:6,color:"#9ca3af",fontWeight:400,textTransform:"none",fontSize:11}}>{tip}</span>}</div>}{children}</div>;
+}
+function I({val,set,ph,type="text",w,sm}) {
+  return <input type={type} value={val||""} onChange={e=>set(e.target.value)} placeholder={ph} style={{width:w||"100%",padding:sm?"5px 8px":"7px 11px",border:"1.5px solid #e5e7eb",borderRadius:7,fontSize:sm?12:13,color:"#111",background:"#fafafa",boxSizing:"border-box"}}/>;
+}
+function T({val,set,ph,rows=2}) {
+  return <textarea value={val||""} onChange={e=>set(e.target.value)} placeholder={ph} rows={rows} style={{width:"100%",padding:"7px 11px",border:"1.5px solid #e5e7eb",borderRadius:7,fontSize:13,color:"#111",background:"#fafafa",resize:"vertical",boxSizing:"border-box"}}/>;
+}
+function G({cols=2,gap=12,children}) {
+  return <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap}}>{children}</div>;
+}
+function SH({icon,title,color="#1e3a5f"}) {
+  return <div style={{background:color,color:"#fff",padding:"8px 16px",borderRadius:"10px 10px 0 0",fontWeight:700,fontSize:12,letterSpacing:0.8,textTransform:"uppercase",marginTop:16,display:"flex",alignItems:"center",gap:8}}><span>{icon}</span>{title}</div>;
+}
+function SW({children}) {
+  return <div style={{border:"1px solid #e5e7eb",borderTop:"none",borderRadius:"0 0 10px 10px",padding:"14px 16px",background:"#fff"}}>{children}</div>;
+}
+function SubH({t}) {
+  return <div style={{background:"#f1f5f9",padding:"5px 10px",fontSize:11,fontWeight:700,color:"#374151",textTransform:"uppercase",letterSpacing:0.5,marginBottom:8,borderRadius:5,marginTop:10}}>{t}</div>;
+}
+
+// ── CIE10 Search ──
+function CIE10Search({val,onChange}) {
+  const [q,setQ]=useState(val?.c?`${val.c} — ${val.d}`:"");
+  const [res,setRes]=useState([]);
+  const search = v => {
+    setQ(v);
+    if(v.length<2){setRes([]);return;}
+    const l=v.toLowerCase();
+    setRes(CIE10.filter(x=>x.c.toLowerCase().includes(l)||x.d.toLowerCase().includes(l)).slice(0,8));
+  };
+  const pick = r => {setQ(`${r.c} — ${r.d}`);onChange(r);setRes([]);};
+  return (
+    <div style={{position:"relative"}}>
+      <input value={q} onChange={e=>search(e.target.value)} placeholder="Buscar código o nombre..."
+        style={{width:"100%",padding:"7px 11px",border:"1.5px solid #e5e7eb",borderRadius:7,fontSize:13,background:"#fafafa",boxSizing:"border-box"}}/>
+      {res.length>0&&<div style={{position:"absolute",top:"100%",left:0,right:0,background:"#fff",border:"1.5px solid #2a7a4b",borderRadius:8,zIndex:999,boxShadow:"0 8px 24px rgba(0,0,0,0.12)",maxHeight:220,overflowY:"auto"}}>
+        {res.map(r=><div key={r.c} onClick={()=>pick(r)} style={{padding:"8px 13px",fontSize:12,cursor:"pointer",borderBottom:"1px solid #f3f4f6",display:"flex",gap:10}}
+          onMouseEnter={e=>e.currentTarget.style.background="#f0fdf4"}
+          onMouseLeave={e=>e.currentTarget.style.background="#fff"}>
+          <span style={{fontWeight:700,color:"#2a7a4b",minWidth:60}}>{r.c}</span><span>{r.d}</span>
+        </div>)}
+      </div>}
+    </div>
+  );
+}
+
+// ── Empresa Manager ──
+function EmpresaManager({val,onChange}) {
+  const [db,setDb]=useState(()=>ld("emp_db",[]));
+  const [show,setShow]=useState(false);
+  const [n,setN]=useState({nombre:"",ruc:"",ciiu:"",dir:"",rep:""});
+  const add=()=>{if(!n.nombre)return;const u=[...db,{...n,id:Date.now()}];setDb(u);sv("emp_db",u);onChange({...n,id:Date.now()});setShow(false);setN({nombre:"",ruc:"",ciiu:"",dir:"",rep:""});};
+  const del=id=>{const u=db.filter(e=>e.id!==id);setDb(u);sv("emp_db",u);};
+  return (
+    <div>
+      {db.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:8}}>
+        {db.map(e=><div key={e.id} style={{display:"flex",alignItems:"center",gap:3}}>
+          <button onClick={()=>onChange(e)} style={{padding:"5px 14px",borderRadius:20,fontSize:12,border:`2px solid ${val?.id===e.id?"#1e3a5f":"#e5e7eb"}`,background:val?.id===e.id?"#1e3a5f":"#fff",color:val?.id===e.id?"#fff":"#374151",cursor:"pointer",fontWeight:val?.id===e.id?700:400}}>{e.nombre}</button>
+          <button onClick={()=>del(e.id)} style={{background:"none",border:"none",color:"#ef4444",cursor:"pointer",fontSize:16}}>×</button>
+        </div>)}
+      </div>}
+      <button onClick={()=>setShow(!show)} style={{fontSize:12,background:"#eff6ff",border:"1.5px dashed #3b82f6",borderRadius:7,padding:"6px 14px",color:"#2563eb",cursor:"pointer",fontWeight:600}}>+ Nueva empresa</button>
+      {show&&<div style={{marginTop:10,padding:12,background:"#f8fafc",border:"1px solid #e5e7eb",borderRadius:8}}>
+        <G cols={2}><F label="Razón Social"><I val={n.nombre} set={v=>setN(x=>({...x,nombre:v}))} /></F><F label="RUC"><I val={n.ruc} set={v=>setN(x=>({...x,ruc:v}))} /></F><F label="CIIU"><I val={n.ciiu} set={v=>setN(x=>({...x,ciiu:v}))} /></F><F label="Representante"><I val={n.rep} set={v=>setN(x=>({...x,rep:v}))} /></F></G>
+        <F label="Dirección"><I val={n.dir} set={v=>setN(x=>({...x,dir:v}))} /></F>
+        <div style={{display:"flex",gap:8,marginTop:8}}>
+          <button onClick={add} style={{background:"#2a7a4b",color:"#fff",border:"none",borderRadius:6,padding:"7px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}>Guardar</button>
+          <button onClick={()=>setShow(false)} style={{background:"#f3f4f6",color:"#374151",border:"1px solid #e5e7eb",borderRadius:6,padding:"7px 14px",fontSize:13,cursor:"pointer"}}>Cancelar</button>
+        </div>
+      </div>}
+      {val&&<div style={{marginTop:8,background:"#eff6ff",border:"1px solid #bfdbfe",borderRadius:8,padding:"8px 12px",fontSize:12,display:"flex",gap:16,flexWrap:"wrap"}}>
+        {val.ruc&&<span><b>RUC:</b> {val.ruc}</span>}
+        {val.ciiu&&<span><b>CIIU:</b> {val.ciiu}</span>}
+        {val.rep&&<span><b>Rep:</b> {val.rep}</span>}
+        {val.dir&&<span><b>Dir:</b> {val.dir}</span>}
+      </div>}
+    </div>
+  );
+}
+
+// ── IA Panel (Groq) ──
+function IAPanel({dx,apt,onInsert}) {
+  const [loading,setLoading]=useState(false);
+  const [sugs,setSugs]=useState([]);
+  const [err,setErr]=useState("");
+  const gen = async () => {
+    if(!GROQ_KEY){setErr("Agrega tu Groq API Key en el código (línea GROQ_KEY).");return;}
+    const dxList=dx.filter(d=>d.cie10||d.desc).map(d=>`${d.cie10} ${d.desc}`).join(", ");
+    if(!dxList){setErr("Ingrese al menos un diagnóstico en sección K.");return;}
+    setLoading(true);setErr("");setSugs([]);
+    try {
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},
+        body:JSON.stringify({
+          model:"llama-3.3-70b-versatile",
+          messages:[
+            {role:"system",content:"Eres médico especialista en Salud Ocupacional en Ecuador. Genera recomendaciones médico-laborales CONCRETAS. Incluye EPP, hidratación, pausas, restricciones y seguimiento. Responde SOLO con JSON sin backticks: {\"r\":[\"rec1\",\"rec2\",\"rec3\",\"rec4\",\"rec5\"]}"},
+            {role:"user",content:`Diagnósticos: ${dxList}. Aptitud: ${apt||"No especificada"}. Da 5 recomendaciones de medicina laboral para Ecuador.`}
+          ],
+          max_tokens:600,temperature:0.4
+        })
+      });
+      const data=await res.json();
+      const text=data.choices?.[0]?.message?.content||"";
+      const parsed=JSON.parse(text.replace(/```json|```/g,"").trim());
+      setSugs(parsed.r||[]);
+    } catch{setErr("Error al generar. Verifique su Groq API Key.");}
+    setLoading(false);
+  };
+  return (
+    <div style={{marginTop:12,background:"#f0fdf4",border:"1.5px solid #bbf7d0",borderRadius:10,padding:14}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+        <span style={{fontWeight:700,color:"#166534",fontSize:13}}>✨ Sugerencias IA (Groq)</span>
+        <button onClick={gen} disabled={loading} style={{background:loading?"#9ca3af":"#2a7a4b",color:"#fff",border:"none",borderRadius:7,padding:"7px 16px",fontSize:12,fontWeight:700,cursor:loading?"not-allowed":"pointer"}}>
+          {loading?"Generando...":"Generar con IA"}
+        </button>
+      </div>
+      {err&&<div style={{color:"#dc2626",fontSize:12,marginBottom:8}}>{err}</div>}
+      {sugs.map((s,i)=><div key={i} style={{display:"flex",gap:8,marginBottom:7,background:"#fff",border:"1px solid #d1fae5",borderRadius:7,padding:"8px 12px",alignItems:"flex-start"}}>
+        <span style={{color:"#2a7a4b",fontWeight:800,minWidth:20}}>{i+1}.</span>
+        <span style={{flex:1,fontSize:12,color:"#1f2937",lineHeight:1.5}}>{s}</span>
+        <button onClick={()=>onInsert(s)} style={{background:"#2a7a4b",color:"#fff",border:"none",borderRadius:5,padding:"4px 11px",fontSize:11,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>Usar</button>
+      </div>)}
+      {sugs.length>0&&<button onClick={()=>onInsert(sugs.join("\n• "))} style={{background:"#1e3a5f",color:"#fff",border:"none",borderRadius:7,padding:"7px 18px",fontSize:12,fontWeight:700,cursor:"pointer",marginTop:4}}>Insertar todas</button>}
+    </div>
+  );
+}
+
+const TABS=[{id:0,l:"👤 Datos"},{id:1,l:"📋 Antec."},{id:2,l:"🩺 Examen"},{id:3,l:"⚠️ Riesgos"},{id:4,l:"🏭 Laboral"},{id:5,l:"🔬 Lab/Dx"},{id:6,l:"✅ Aptitud"}];
+const initDx=()=>Array(6).fill(null).map(()=>({cie10:"",desc:"",pre:false,def:false}));
+const initEx=()=>Array(4).fill(null).map(()=>({nombre:"",fecha:"",resultado:""}));
+const initEmp=()=>Array(6).fill(null).map(()=>({centro:"",actividad:"",anterior:false,actual:false,tiempo:"",incidente:false,accidente:false,enfermedad:false,si:false,no:false,especificar:""}));
+
+function App() {
+  const [tab,setTab]=useState(0);
+  const [med,setMed]=useState(()=>ld("med_v3",{nombre:"",codigo:"",esp:""}));
+  const [showMed,setShowMed]=useState(false);
+
+  // Estado del formulario
+  const [emp,setEmp]=useState(null);
+  const [numHC,setNumHC]=useState("");
+  const [a1,setA1]=useState("");const [a2,setA2]=useState("");const [n1,setN1]=useState("");const [n2,setN2]=useState("");
+  const [atPrio,setAtPrio]=useState([]);const [sexo,setSexo]=useState("");
+  const [fAno,setFAno]=useState("");const [fMes,setFMes]=useState("");const [fDia,setFDia]=useState("");
+  const [edad,setEdad]=useState("");const [gs,setGs]=useState("");const [lat,setLat]=useState("");
+  const [puesto,setPuesto]=useState("");const [fAten,setFAten]=useState(new Date().toISOString().slice(0,10));
+  const [fIng,setFIng]=useState("");const [tipoEval,setTipoEval]=useState("");const [obsB,setObsB]=useState("");
+  const [antC,setAntC]=useState("");const [antF,setAntF]=useState("");
+  const [transf,setTransf]=useState("");const [tratH,setTratH]=useState("");const [tratHd,setTratHd]=useState("");
+  const [tabaco,setTabaco]=useState({t:"",exC:false,abs:"",noC:false});
+  const [alc,setAlc]=useState({t:"",exC:false,abs:"",noC:false});
+  const [actF,setActF]=useState("");const [medH,setMedH]=useState("");const [condP,setCondP]=useState("");const [obsC,setObsC]=useState("");
+  const [enf,setEnf]=useState("");
+  const [temp,setTemp]=useState("");const [pa,setPa]=useState("");const [fc,setFc]=useState("");const [fr,setFr]=useState("");
+  const [sat,setSat]=useState("");const [peso,setPeso]=useState("");const [talla,setTalla]=useState("");const [imc,setImc]=useState("");const [perab,setPerab]=useState("");
+  const [hall,setHall]=useState({});const [obsF,setObsF]=useState("");
+  const [riesg,setRiesg]=useState({});const [medPrev,setMedPrev]=useState("");const [actJ,setActJ]=useState("");
+  const [empl,setEmpl]=useState(initEmp());
+  const [exams,setExams]=useState(initEx());const [obsJ,setObsJ]=useState("");
+  const [dx,setDx]=useState(initDx());
+  const [apt,setApt]=useState("");const [obsApt,setObsApt]=useState("");
+  const [recom,setRecom]=useState("");
+  const [evalR,setEvalR]=useState("");const [condRel,setCondRel]=useState("");const [obsN,setObsN]=useState("");
+
+  const calcIMC=()=>{if(peso&&talla){const t=parseFloat(talla)/100;setImc((parseFloat(peso)/(t*t)).toFixed(1));}};
+  const saveMed=m=>{setMed(m);sv("med_v3",m);setShowMed(false);};
+  const aptColor=apt==="APTO"?"#16a34a":apt==="NO APTO"?"#dc2626":apt==="APTO EN OBSERVACIÓN"?"#d97706":"#2563eb";
+  const aptBg=apt==="APTO"?"#f0fdf4":apt==="NO APTO"?"#fef2f2":apt==="APTO EN OBSERVACIÓN"?"#fffbeb":"#eff6ff";
+  const th={padding:"7px 8px",textAlign:"left",fontWeight:700,fontSize:11,border:"1px solid #e5e7eb",background:"#f1f5f9"};
+  const td={padding:"4px 6px",border:"1px solid #f1f5f9",verticalAlign:"middle"};
+  const ti={width:"100%",border:"none",background:"transparent",fontSize:12,padding:"3px 4px",fontFamily:"inherit"};
+
+  return (
+    <div style={{fontFamily:"'Outfit',system-ui,sans-serif",background:"#f8fafc",minHeight:"100vh"}}>
+      {/* Header */}
+      <div className="np" style={{background:"#1e3a5f",color:"#fff",padding:"10px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
+        <div>
+          <div style={{fontWeight:800,fontSize:17}}>🩺 Ficha Médica Ocupacional</div>
+          <div style={{fontSize:11,opacity:0.6}}>MSP Ecuador — Consulta Laboral Dr. Córdova</div>
+        </div>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <button onClick={()=>setShowMed(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"7px 14px",color:"#fff",fontSize:12,cursor:"pointer",fontWeight:600}}>
+            👨‍⚕️ {med.nombre||"⚙️ Mi perfil médico"}
+          </button>
+          <button onClick={()=>window.print()} style={{background:"#2a7a4b",color:"#fff",border:"none",borderRadius:8,padding:"8px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}}>🖨 PDF</button>
+        </div>
+      </div>
+
+      {/* Modal médico */}
+      {showMed&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+        <div style={{background:"#fff",borderRadius:14,padding:24,width:360,boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+          <div style={{fontWeight:800,fontSize:16,color:"#1e3a5f",marginBottom:16}}>⚙️ Mis Datos de Médico</div>
+          <MedForm med={med} onSave={saveMed} onCancel={()=>setShowMed(false)}/>
+        </div>
+      </div>}
+
+      {/* Tabs */}
+      <div className="np" style={{background:"#fff",borderBottom:"2px solid #f1f5f9",display:"flex",overflowX:"auto",padding:"0 12px"}}>
+        {TABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"11px 14px",border:"none",borderBottom:tab===t.id?"3px solid #1e3a5f":"3px solid transparent",background:"none",fontSize:12,fontWeight:tab===t.id?700:500,color:tab===t.id?"#1e3a5f":"#6b7280",cursor:"pointer",whiteSpace:"nowrap"}}>{t.l}</button>)}
+      </div>
+
+      <div className="pwrap" style={{maxWidth:1000,margin:"0 auto",padding:"16px 14px"}}>
+
+        {tab===0&&<>
+          <SH icon="🏢" title="A. Empresa / Establecimiento"/>
+          <SW>
+            <F label="Empresa"><EmpresaManager val={emp} onChange={setEmp}/></F>
+            <F label="Nº Historia Clínica"><I val={numHC} set={setNumHC} w="200px"/></F>
+          </SW>
+          <SH icon="👤" title="A. Datos del Paciente"/>
+          <SW>
+            <G cols={4}><F label="Primer Apellido"><I val={a1} set={setA1}/></F><F label="Segundo Apellido"><I val={a2} set={setA2}/></F><F label="Primer Nombre"><I val={n1} set={setN1}/></F><F label="Segundo Nombre"><I val={n2} set={setN2}/></F></G>
+            <F label="Atención Prioritaria"><QS multi opts={["Embarazada","Discapacidad","E. Catastrófica","Lactancia","Adulto Mayor"]} val={atPrio} onChange={setAtPrio} color="#7c3aed"/></F>
+            <G cols={4}>
+              <F label="Sexo"><QS opts={["Hombre","Mujer"]} val={sexo} onChange={setSexo}/></F>
+              <F label="Fecha Nacimiento" tip="aaaa/mm/dd"><div style={{display:"flex",gap:5}}><I val={fAno} set={setFAno} ph="aaaa" w="70px"/><I val={fMes} set={setFMes} ph="mm" w="50px"/><I val={fDia} set={setFDia} ph="dd" w="50px"/></div></F>
+              <F label="Edad"><I val={edad} set={setEdad} ph="años" w="70px"/></F>
+            </G>
+            <G cols={2}>
+              <F label="Grupo Sanguíneo"><QS opts={GS} val={gs} onChange={setGs} color="#dc2626"/></F>
+              <F label="Lateralidad"><QS opts={LATERALIDAD} val={lat} onChange={setLat}/></F>
+            </G>
+          </SW>
+          <SH icon="📝" title="B. Motivo de Consulta"/>
+          <SW>
+            <G cols={2}><F label="Puesto de Trabajo (CIUO)"><I val={puesto} set={setPuesto}/></F><F label="Fecha de Atención"><I val={fAten} set={setFAten} type="date"/></F></G>
+            <F label="Tipo de Evaluación"><QS opts={TIPO_EVAL} val={tipoEval} onChange={setTipoEval} size="lg"/></F>
+            <F label="Fecha Ingreso al Trabajo"><I val={fIng} set={setFIng} type="date" w="200px"/></F>
+            <F label="Observación"><T val={obsB} set={setObsB}/></F>
+          </SW>
+        </>}
+
+        {tab===1&&<>
+          <SH icon="📋" title="C. Antecedentes Personales"/>
+          <SW>
+            <F label="Antecedentes Clínicos y Quirúrgicos"><T val={antC} set={setAntC} ph="HTA, DM2, cirugías previas..." rows={2}/></F>
+            <F label="Antecedentes Familiares"><T val={antF} set={setAntF} ph="DM, HTA, cardiopatías..." rows={2}/></F>
+            <G cols={2}>
+              <F label="Autoriza transfusiones"><QS opts={["Sí","No"]} val={transf} onChange={setTransf}/></F>
+              <div><F label="Tratamiento hormonal"><QS opts={["Sí","No"]} val={tratH} onChange={setTratH}/></F>{tratH==="Sí"&&<I val={tratHd} set={setTratHd} ph="¿Cuál?"/>}</div>
+            </G>
+            <SubH t="CONSUMO DE SUSTANCIAS"/>
+            {[{l:"Tabaco",s:tabaco,set:setTabaco},{l:"Alcohol",s:alc,set:setAlc}].map(({l,s,set})=>(
+              <div key={l} style={{marginBottom:12}}>
+                <div style={{fontWeight:700,fontSize:12,color:"#374151",marginBottom:6}}>{l}</div>
+                <G cols={4} gap={8}>
+                  <F label="Tiempo (meses)"><I val={s.t} set={v=>set(x=>({...x,t:v}))} ph="meses"/></F>
+                  <F label="Ex consumidor"><QS opts={["Sí","No"]} val={s.exC?"Sí":"No"} onChange={v=>set(x=>({...x,exC:v==="Sí"}))}/></F>
+                  <F label="Abstinencia (meses)"><I val={s.abs} set={v=>set(x=>({...x,abs:v}))} ph="meses"/></F>
+                  <F label="No consume"><QS opts={["Sí","No"]} val={s.noC?"Sí":"No"} onChange={v=>set(x=>({...x,noC:v==="Sí"}))}/></F>
+                </G>
+              </div>
+            ))}
+            <G cols={3}>
+              <F label="Actividad Física"><I val={actF} set={setActF} ph="Tipo y frecuencia"/></F>
+              <F label="Medicación Habitual"><I val={medH} set={setMedH} ph="Medicamentos actuales"/></F>
+              <F label="Condición Preexistente"><I val={condP} set={setCondP} ph="HTA, DM2..."/></F>
+            </G>
+            <F label="Observación"><T val={obsC} set={setObsC}/></F>
+          </SW>
+        </>}
+
+        {tab===2&&<>
+          <SH icon="🩺" title="D. Enfermedad o Problema Actual"/>
+          <SW><T val={enf} set={setEnf} rows={3} ph="Motivo de consulta, tiempo de evolución, síntomas..."/></SW>
+          <SH icon="📊" title="E. Constantes Vitales y Antropometría"/>
+          <SW>
+            <G cols={5}>
+              <F label="Temp. °C"><I val={temp} set={setTemp} ph="36.5"/></F>
+              <F label="P. Arterial mmHg"><I val={pa} set={setPa} ph="120/80"/></F>
+              <F label="FC lpm"><I val={fc} set={setFc} ph="72"/></F>
+              <F label="FR rpm"><I val={fr} set={setFr} ph="16"/></F>
+              <F label="SatO2 %"><I val={sat} set={setSat} ph="98"/></F>
+            </G>
+            <G cols={4}>
+              <F label="Peso kg"><I val={peso} set={setPeso} ph="70"/></F>
+              <F label="Talla cm"><I val={talla} set={setTalla} ph="170"/></F>
+              <F label="IMC kg/m²"><div style={{display:"flex",gap:6}}><I val={imc} set={setImc} ph="24.2"/><button onClick={calcIMC} style={{background:"#2a7a4b",color:"#fff",border:"none",borderRadius:7,padding:"5px 12px",fontSize:12,fontWeight:700,cursor:"pointer"}}>Calc</button></div></F>
+              <F label="P. Abdominal cm"><I val={perab} set={setPerab} ph="88"/></F>
+            </G>
+          </SW>
+          <SH icon="🔍" title="F. Examen Físico Regional"/>
+          <SW>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+              {REGIONES.map(r=><div key={r} style={{border:`1.5px solid ${hall[r]==="Patológico"?"#fca5a5":hall[r]==="Normal"?"#bbf7d0":"#e5e7eb"}`,borderRadius:8,padding:10,background:hall[r]==="Patológico"?"#fff5f5":hall[r]==="Normal"?"#f0fdf4":"#fff"}}>
+                <div style={{fontWeight:700,fontSize:12,color:"#1e3a5f",marginBottom:6}}>{r}</div>
+                <QS opts={["Normal","Patológico"]} val={hall[r]||""} onChange={v=>setHall(h=>({...h,[r]:v}))} color={hall[r]==="Patológico"?"#dc2626":"#16a34a"}/>
+                {hall[r]==="Patológico"&&<input value={hall[`${r}_d`]||""} onChange={e=>setHall(h=>({...h,[`${r}_d`]:e.target.value}))} placeholder="Describir..." style={{marginTop:6,width:"100%",padding:"5px 8px",border:"1.5px solid #fca5a5",borderRadius:6,fontSize:12,background:"#fff"}}/>}
+              </div>)}
+            </div>
+            <F label="Observaciones" style={{marginTop:10}}><T val={obsF} set={setObsF}/></F>
+          </SW>
+        </>}
+
+        {tab===3&&<>
+          <SH icon="⚠️" title="G. Factores de Riesgo del Trabajo Actual"/>
+          <SW>
+            <F label="Actividades principales en la jornada laboral"><T val={actJ} set={setActJ} rows={2}/></F>
+            {Object.entries(FACTORES).map(([cat,items])=><div key={cat} style={{marginBottom:14}}>
+              <div style={{fontWeight:700,fontSize:11,color:"#fff",background:"#374151",display:"inline-block",padding:"3px 12px",borderRadius:20,marginBottom:8}}>{cat}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {items.map(item=>{const k=`${cat}_${item}`;const a=!!riesg[k];return<button key={item} onClick={()=>setRiesg(r=>({...r,[k]:!r[k]}))} style={{padding:"5px 13px",borderRadius:20,fontSize:12,border:`2px solid ${a?"#dc2626":"#e5e7eb"}`,background:a?"#dc2626":"#fff",color:a?"#fff":"#374151",cursor:"pointer",fontWeight:a?700:400}}>{a?"✓ ":""}{item}</button>;})}
+              </div>
+            </div>)}
+            <F label="Medidas Preventivas"><T val={medPrev} set={setMedPrev} rows={2}/></F>
+          </SW>
+        </>}
+
+        {tab===4&&<>
+          <SH icon="🏭" title="H. Antecedentes Laborales"/>
+          <SW>
+            <div style={{overflowX:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,minWidth:700}}>
+                <thead><tr><th style={th}>Centro de Trabajo</th><th style={th}>Actividades</th><th style={th}>Ant</th><th style={th}>Act</th><th style={th}>Tiempo</th><th style={th}>Inc</th><th style={th}>Acc</th><th style={th}>Enf</th><th style={th}>IESS Sí</th><th style={th}>IESS No</th><th style={th}>Especificar</th></tr></thead>
+                <tbody>{empl.map((e,i)=><tr key={i} style={{background:i%2?"#f8fafc":"#fff"}}>
+                  <td style={td}><input value={e.centro} onChange={ev=>{const n=[...empl];n[i].centro=ev.target.value;setEmpl(n);}} style={ti}/></td>
+                  <td style={td}><input value={e.actividad} onChange={ev=>{const n=[...empl];n[i].actividad=ev.target.value;setEmpl(n);}} style={ti}/></td>
+                  {["anterior","actual","incidente","accidente","enfermedad","si","no"].map(f=><td key={f} style={{...td,textAlign:"center"}}><input type="checkbox" checked={!!e[f]} onChange={ev=>{const n=[...empl];n[i][f]=ev.target.checked;setEmpl(n);}}/></td>)}
+                  <td style={td}><input value={e.tiempo} onChange={ev=>{const n=[...empl];n[i].tiempo=ev.target.value;setEmpl(n);}} style={ti}/></td>
+                  <td style={td}><input value={e.especificar} onChange={ev=>{const n=[...empl];n[i].especificar=ev.target.value;setEmpl(n);}} style={ti}/></td>
+                </tr>)}</tbody>
+              </table>
+            </div>
+          </SW>
+        </>}
+
+        {tab===5&&<>
+          <SH icon="🔬" title="J. Exámenes de Laboratorio e Imagen"/>
+          <SW>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr><th style={th}>Nombre del Examen</th><th style={{...th,width:140}}>Fecha</th><th style={{...th,width:"45%"}}>Resultados</th></tr></thead>
+              <tbody>{exams.map((ex,i)=><tr key={i}>
+                <td style={td}><input value={ex.nombre} onChange={ev=>{const n=[...exams];n[i].nombre=ev.target.value;setExams(n);}} style={ti}/></td>
+                <td style={td}><input type="date" value={ex.fecha} onChange={ev=>{const n=[...exams];n[i].fecha=ev.target.value;setExams(n);}} style={ti}/></td>
+                <td style={td}><input value={ex.resultado} onChange={ev=>{const n=[...exams];n[i].resultado=ev.target.value;setExams(n);}} style={ti}/></td>
+              </tr>)}</tbody>
+            </table>
+            <F label="Observaciones" style={{marginTop:8}}><T val={obsJ} set={setObsJ}/></F>
+          </SW>
+          <SH icon="🏥" title="K. Diagnóstico — CIE-10"/>
+          <SW>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr><th style={{...th,width:30}}>#</th><th style={th}>Buscar diagnóstico CIE-10</th><th style={{...th,width:60,textAlign:"center"}}>PRE</th><th style={{...th,width:60,textAlign:"center"}}>DEF</th></tr></thead>
+              <tbody>{dx.map((d,i)=><tr key={i}>
+                <td style={{...td,textAlign:"center",fontWeight:700,color:"#9ca3af"}}>{i+1}</td>
+                <td style={td}><CIE10Search val={d} onChange={v=>{const n=[...dx];n[i]={...n[i],cie10:v.c,desc:v.d};setDx(n);}}/></td>
+                <td style={{...td,textAlign:"center"}}><input type="checkbox" checked={d.pre} onChange={ev=>{const n=[...dx];n[i].pre=ev.target.checked;setDx(n);}} style={{width:18,height:18,cursor:"pointer"}}/></td>
+                <td style={{...td,textAlign:"center"}}><input type="checkbox" checked={d.def} onChange={ev=>{const n=[...dx];n[i].def=ev.target.checked;setDx(n);}} style={{width:18,height:18,cursor:"pointer"}}/></td>
+              </tr>)}</tbody>
+            </table>
+          </SW>
+        </>}
+
+        {tab===6&&<>
+          <SH icon="✅" title="L. Aptitud Médica para el Trabajo"/>
+          <SW>
+            <div style={{display:"flex",flexWrap:"wrap",gap:10,marginBottom:12}}>
+              {APTITUD_OPTS.map(o=>{const col=o==="APTO"?"#16a34a":o==="NO APTO"?"#dc2626":o==="APTO EN OBSERVACIÓN"?"#d97706":"#2563eb";const a=apt===o;return<button key={o} onClick={()=>setApt(o)} style={{padding:"12px 24px",borderRadius:10,fontSize:14,fontWeight:700,border:`2.5px solid ${a?col:"#e5e7eb"}`,background:a?col:"#fff",color:a?"#fff":col,cursor:"pointer",transition:"all 0.15s"}}>{o}</button>;})}
+            </div>
+            {apt&&<div style={{padding:"10px 16px",borderRadius:8,background:aptBg,border:`2px solid ${aptColor}`,fontWeight:700,fontSize:16,color:aptColor,marginBottom:10}}>
+              {apt==="APTO"?"✅":apt==="NO APTO"?"❌":apt==="APTO EN OBSERVACIÓN"?"⚠️":"🔵"} {apt}
+            </div>}
+            <F label="Observaciones"><T val={obsApt} set={setObsApt} rows={2}/></F>
+          </SW>
+
+          <SH icon="📝" title="M. Recomendaciones y/o Tratamiento"/>
+          <SW>
+            <div style={{marginBottom:12}}>
+              <div style={{fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"uppercase",letterSpacing:0.6,marginBottom:8}}>Insertar con un clic:</div>
+              {RECOM.map(cat=><div key={cat.cat} style={{marginBottom:10}}>
+                <div style={{fontWeight:700,fontSize:12,color:"#374151",marginBottom:5}}>{cat.cat}</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                  {cat.items.map((item,i)=><button key={i} onClick={()=>setRecom(r=>r?r+"\n• "+item:"• "+item)}
+                    style={{padding:"5px 12px",borderRadius:20,fontSize:11,border:"1.5px solid #e5e7eb",background:"#f8fafc",color:"#374151",cursor:"pointer",maxWidth:280,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                    + {item.length>50?item.slice(0,50)+"...":item}
+                  </button>)}
+                </div>
+              </div>)}
+            </div>
+            <T val={recom} set={setRecom} rows={5} ph="Las recomendaciones aparecerán aquí..."/>
+            <IAPanel dx={dx} apt={apt} onInsert={s=>setRecom(r=>r?r+"\n• "+s:"• "+s)}/>
+          </SW>
+
+          <SH icon="🔄" title="N. Retiro / Evaluación"/>
+          <SW>
+            <G cols={2}>
+              <F label="Se realiza la evaluación"><QS opts={["Sí","No"]} val={evalR} onChange={setEvalR}/></F>
+              <F label="Condición relacionada con el trabajo"><QS opts={["Sí","No"]} val={condRel} onChange={setCondRel}/></F>
+            </G>
+            <F label="Observación"><T val={obsN} set={setObsN} rows={2}/></F>
+          </SW>
+
+          <SH icon="👨‍⚕️" title="O. Datos del Profesional / P. Firma"/>
+          <SW>
+            <G cols={3}>
+              <F label="Nombre del Profesional"><I val={med.nombre} set={v=>setMed(m=>({...m,nombre:v}))}/></F>
+              <F label="Código Médico MSP"><I val={med.codigo} set={v=>setMed(m=>({...m,codigo:v}))}/></F>
+              <F label="Especialidad"><I val={med.esp} set={v=>setMed(m=>({...m,esp:v}))}/></F>
+            </G>
+            <div style={{marginTop:10,display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <div style={{height:64,border:"1.5px dashed #d1d5db",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",color:"#9ca3af",fontSize:12}}>Firma y sello del médico</div>
+              <div style={{height:64,border:"1.5px dashed #d1d5db",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",color:"#9ca3af",fontSize:12}}>Firma del trabajador</div>
+            </div>
+          </SW>
+
+          {(a1||n1)&&apt&&<div style={{marginTop:20,background:aptBg,border:`2px solid ${aptColor}`,borderRadius:12,padding:16}}>
+            <div style={{fontWeight:800,fontSize:16,color:aptColor,marginBottom:6}}>{apt==="APTO"?"✅":apt==="NO APTO"?"❌":"⚠️"} {a1} {a2} {n1} — {apt}</div>
+            <div style={{fontSize:12,color:"#374151",display:"flex",gap:16,flexWrap:"wrap"}}>
+              {emp?.nombre&&<span>🏢 {emp.nombre}</span>}
+              {gs&&<span>🩸 {gs}</span>}
+              {tipoEval&&<span>📋 {tipoEval}</span>}
+              {fAten&&<span>📅 {fAten}</span>}
+            </div>
+            {dx.filter(d=>d.cie10).length>0&&<div style={{marginTop:8,fontSize:12}}><b>Dx:</b> {dx.filter(d=>d.cie10).map(d=>`${d.cie10} ${d.desc}`).join(" | ")}</div>}
+          </div>}
+
+          <div className="np" style={{textAlign:"center",marginTop:20,paddingBottom:30}}>
+            <button onClick={()=>window.print()} style={{background:"#1e3a5f",color:"#fff",border:"none",borderRadius:10,padding:"13px 40px",fontSize:15,fontWeight:700,cursor:"pointer"}}>🖨 Imprimir / Exportar PDF</button>
+          </div>
+        </>}
+
+      </div>
+    </div>
+  );
+}
+
+function MedForm({med,onSave,onCancel}) {
+  const [m,setM]=useState(med);
+  return <div>
+    <F label="Nombres y Apellidos"><I val={m.nombre} set={v=>setM(x=>({...x,nombre:v}))} ph="Dr. Galo Córdova"/></F>
+    <F label="Código Médico MSP"><I val={m.codigo} set={v=>setM(x=>({...x,codigo:v}))} ph="Ej: 1234567"/></F>
+    <F label="Especialidad"><I val={m.esp} set={v=>setM(x=>({...x,esp:v}))} ph="Medicina Ocupacional"/></F>
+    <div style={{display:"flex",gap:8,marginTop:14}}>
+      <button onClick={()=>onSave(m)} style={{background:"#2a7a4b",color:"#fff",border:"none",borderRadius:7,padding:"9px 22px",fontSize:13,fontWeight:700,cursor:"pointer"}}>💾 Guardar</button>
+      <button onClick={onCancel} style={{background:"#f3f4f6",color:"#374151",border:"1px solid #e5e7eb",borderRadius:7,padding:"9px 16px",fontSize:13,cursor:"pointer"}}>Cancelar</button>
+    </div>
+  </div>;
+}
+
+function F({label,children,tip,style={}}) {
+  return <div style={{marginBottom:10,...style}}>{label&&<div style={{fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"uppercase",letterSpacing:0.6,marginBottom:4}}>{label}{tip&&<span style={{marginLeft:6,color:"#9ca3af",fontWeight:400,textTransform:"none",fontSize:11}}>{tip}</span>}</div>}{children}</div>;
+}
+function I({val,set,ph,type="text",w,sm}) {
+  return <input type={type} value={val||""} onChange={e=>set(e.target.value)} placeholder={ph} style={{width:w||"100%",padding:sm?"5px 8px":"7px 11px",border:"1.5px solid #e5e7eb",borderRadius:7,fontSize:sm?12:13,color:"#111",background:"#fafafa",boxSizing:"border-box"}}/>;
+}
+function T({val,set,ph,rows=2}) {
+  return <textarea value={val||""} onChange={e=>set(e.target.value)} placeholder={ph} rows={rows} style={{width:"100%",padding:"7px 11px",border:"1.5px solid #e5e7eb",borderRadius:7,fontSize:13,color:"#111",background:"#fafafa",resize:"vertical",boxSizing:"border-box"}}/>;
+}
+function G({cols=2,gap=12,children}) {
+  return <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap}}>{children}</div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
