@@ -3,854 +3,751 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ficha Médica Ocupacional — MSP Ecuador</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<title>Ficha Médica Ocupacional</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Outfit',Arial,sans-serif;background:#e8eaf0;font-size:12px;}
-input,textarea,button,select{font-family:'Outfit',Arial,sans-serif;}
-
-/* ── Colores MSP ── */
-:root{
-  --azul:#6b7dc2;--azul-dark:#4a5a9a;
-  --verde:#a8c8a0;--verde-dark:#5a8a50;--verde-header:#8ab888;
-  --gris-claro:#f0f4f0;--borde:#b0c0b0;
-}
-
-/* ── Layout pantalla ── */
-.screen-header{background:#1e3a5f;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100;}
-.tabs{background:#fff;border-bottom:2px solid #ddd;display:flex;overflow-x:auto;padding:0 12px;}
-.tab-btn{padding:10px 14px;border:none;border-bottom:3px solid transparent;background:none;font-size:12px;font-weight:500;color:#6b7280;cursor:pointer;white-space:nowrap;}
-.tab-btn.active{border-bottom:3px solid #1e3a5f;font-weight:700;color:#1e3a5f;}
-.screen-wrap{max-width:1000px;margin:0 auto;padding:16px 14px;}
-.np-section{background:#fff;border:1px solid #ddd;border-radius:8px;padding:14px;margin-bottom:16px;}
-
-/* ── Chips ── */
-.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.chip{padding:5px 13px;border-radius:20px;font-size:11px;border:2px solid #ddd;background:#fff;color:#555;cursor:pointer;font-weight:500;}
-.chip.active{background:#2a7a4b;border-color:#2a7a4b;color:#fff;font-weight:700;}
-.chip.red.active{background:#dc2626;border-color:#dc2626;}
-.chip.blue.active{background:#2563eb;border-color:#2563eb;}
-.chip.purple.active{background:#7c3aed;border-color:#7c3aed;}
-.chip.lg{padding:10px 20px;font-size:13px;border-radius:10px;}
+body{font-family:'Outfit',Arial,sans-serif;background:#f0f4f0;font-size:13px;}
+.hdr{background:#1e3a5f;color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.hdr h1{font-size:16px;font-weight:800;}
+.hdr p{font-size:10px;opacity:0.6;}
+.btn-green{background:#2a7a4b;color:#fff;border:none;border-radius:7px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-gray{background:#f3f4f6;color:#374151;border:1px solid #ddd;border-radius:7px;padding:8px 14px;font-size:12px;cursor:pointer;}
+.tabs{background:#fff;border-bottom:2px solid #e5e7eb;display:flex;overflow-x:auto;}
+.tb{padding:10px 14px;border:none;border-bottom:3px solid transparent;background:none;font-size:12px;font-weight:500;color:#6b7280;cursor:pointer;white-space:nowrap;font-family:'Outfit',Arial,sans-serif;}
+.tb.on{border-bottom-color:#1e3a5f;font-weight:700;color:#1e3a5f;}
+.wrap{max-width:960px;margin:0 auto;padding:14px;}
+.sec-h{background:#1e3a5f;color:#fff;padding:7px 14px;border-radius:8px 8px 0 0;font-weight:700;font-size:11px;letter-spacing:0.8px;text-transform:uppercase;margin-top:14px;}
+.sec-b{border:1px solid #ddd;border-top:none;border-radius:0 0 8px 8px;padding:12px 14px;background:#fff;}
+.sub{background:#e8f5e9;padding:4px 10px;font-size:10px;font-weight:700;color:#1a4a1a;text-transform:uppercase;border-radius:4px;margin:8px 0 6px;}
 .fld{margin-bottom:10px;}
-.fld label{display:block;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;}
-input[type=text],input[type=date],textarea{width:100%;padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;color:#111;background:#fafafa;}
+.fld label{display:block;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
+input[type=text],input[type=date],textarea,select{width:100%;padding:7px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;color:#111;background:#fafafa;font-family:'Outfit',Arial,sans-serif;}
 input:focus,textarea:focus{outline:none;border-color:#2a7a4b;}
 textarea{resize:vertical;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
 .g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;}
-.sh{background:#1e3a5f;color:#fff;padding:7px 14px;border-radius:8px 8px 0 0;font-weight:700;font-size:11px;letter-spacing:0.8px;text-transform:uppercase;margin-top:14px;}
-.sb{border:1px solid #ddd;border-top:none;border-radius:0 0 8px 8px;padding:12px 14px;background:#fff;}
-.subh{background:#e8f5e9;padding:4px 10px;font-size:10px;font-weight:700;color:#1a4a1a;text-transform:uppercase;border-radius:4px;margin:8px 0 6px;}
-.apt-btn{padding:11px 20px;border-radius:9px;font-size:13px;font-weight:700;border:2.5px solid #ddd;background:#fff;cursor:pointer;}
-.risk-tag{padding:4px 11px;border-radius:20px;font-size:11px;border:1.5px solid #ddd;background:#fff;color:#374151;cursor:pointer;}
-.risk-tag.on{background:#dc2626;border-color:#dc2626;color:#fff;font-weight:700;}
-.recom-tag{padding:4px 11px;border-radius:20px;font-size:11px;border:1.5px solid #e5e7eb;background:#f8f8f8;color:#374151;cursor:pointer;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.recom-tag:hover{background:#f0fdf4;border-color:#2a7a4b;}
-
-/* ── CIE-10 dropdown ── */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;}
+.chip{padding:5px 12px;border-radius:20px;font-size:11px;border:2px solid #ddd;background:#fff;color:#555;cursor:pointer;font-weight:500;font-family:'Outfit',Arial,sans-serif;}
+.chip.on{background:#2a7a4b;border-color:#2a7a4b;color:#fff;font-weight:700;}
+.chip.red.on{background:#dc2626;border-color:#dc2626;}
+.chip.blue.on{background:#2563eb;border-color:#2563eb;}
+.chip.purple.on{background:#7c3aed;border-color:#7c3aed;}
+.chip.lg{padding:9px 18px;font-size:13px;border-radius:9px;}
+.risk{padding:4px 11px;border-radius:20px;font-size:11px;border:1.5px solid #ddd;background:#fff;color:#374151;cursor:pointer;font-family:'Outfit',Arial,sans-serif;}
+.risk.on{background:#dc2626;border-color:#dc2626;color:#fff;font-weight:700;}
+.apt-btn{padding:11px 20px;border-radius:9px;font-size:13px;font-weight:700;border:2.5px solid #ddd;background:#fff;cursor:pointer;font-family:'Outfit',Arial,sans-serif;}
+.qtag{padding:4px 11px;border-radius:20px;font-size:11px;border:1.5px solid #e5e7eb;background:#f8f8f8;color:#374151;cursor:pointer;max-width:290px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Outfit',Arial,sans-serif;}
+.qtag:hover{background:#f0fdf4;border-color:#2a7a4b;}
 .cie-wrap{position:relative;}
-.cie-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2a7a4b;border-radius:8px;z-index:999;box-shadow:0 8px 20px rgba(0,0,0,0.15);max-height:200px;overflow-y:auto;display:none;}
-.cie-item{padding:7px 12px;font-size:11px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;gap:8px;}
+.cie-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2a7a4b;border-radius:7px;z-index:999;box-shadow:0 8px 20px rgba(0,0,0,0.12);max-height:200px;overflow-y:auto;display:none;}
+.cie-item{padding:7px 12px;font-size:11px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;gap:8px;align-items:center;}
 .cie-item:hover{background:#f0fdf4;}
-.cie-code{font-weight:700;color:#2a7a4b;min-width:58px;}
-
-/* ══════════════════════════════════════
-   ESTILOS DE IMPRESIÓN — formato oficial MSP
-══════════════════════════════════════ */
-@media print {
-  .np,.tabs,.screen-header{display:none!important;}
-  body{background:white;font-size:9pt;font-family:Arial,sans-serif;}
-  .tab-content{display:block!important;}
-  .screen-wrap{padding:0;max-width:100%;}
-  .np-section{display:none!important;}
-
-  /* Formulario impreso */
-  .form-page{page-break-after:always;padding:8mm;font-size:8pt;}
-  .form-page:last-child{page-break-after:avoid;}
-  .f-title{background:#6b7dc2;color:#fff;text-align:center;font-weight:700;font-size:10pt;padding:5px;border:1px solid #4a5a9a;margin-bottom:2px;}
-  .f-section{border:1px solid #8ab888;margin-bottom:3px;}
-  .f-sec-title{background:#8ab888;color:#fff;font-weight:700;font-size:8pt;padding:3px 6px;text-transform:uppercase;}
-  .f-subsec-title{background:#c8e6c9;font-weight:700;font-size:7.5pt;padding:2px 6px;color:#1a3a1a;}
-  .f-row{display:flex;border-top:1px solid #c8dac8;}
-  .f-cell{border-right:1px solid #c8dac8;padding:2px 5px;min-height:18px;font-size:7.5pt;}
-  .f-cell:last-child{border-right:none;}
-  .f-cell-label{background:#e8f5e9;font-weight:600;font-size:7pt;color:#2a4a2a;white-space:nowrap;}
-  .f-cell-value{background:#fff;min-height:16px;}
-  .f-header-row{background:#c8e6c9;display:flex;}
-  .f-header-cell{border-right:1px solid #8ab888;padding:2px 4px;font-size:7pt;font-weight:700;color:#1a3a1a;text-align:center;}
-  .f-table{width:100%;border-collapse:collapse;font-size:7pt;}
-  .f-table th{background:#c8e6c9;border:1px solid #8ab888;padding:2px 4px;font-weight:700;text-align:center;}
-  .f-table td{border:1px solid #c8dac8;padding:2px 4px;min-height:14px;}
-  .f-chip-result{display:inline-block;border:1px solid #333;padding:1px 8px;margin-right:4px;font-size:7pt;}
-  .f-chip-result.marked{background:#1e3a5f;color:#fff;font-weight:700;}
-  .f-apt-result{font-weight:700;font-size:10pt;border:2px solid #333;padding:4px 12px;display:inline-block;margin:4px 0;}
-  .f-firma-box{border:1px solid #aaa;min-height:30px;width:100%;}
-  .apt-apto{border-color:#16a34a;color:#16a34a;}
-  .apt-obs{border-color:#d97706;color:#d97706;}
-  .apt-lim{border-color:#2563eb;color:#2563eb;}
-  .apt-no{border-color:#dc2626;color:#dc2626;}
-  .f-check{display:inline-block;width:10px;height:10px;border:1px solid #333;margin-right:3px;vertical-align:middle;background:#fff;}
-  .f-check.on{background:#1e3a5f;}
-  .f-flex{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
-  .flex1{flex:1;}
-  .f-grid2{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-  .f-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
-  .f-grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center;}
+.modal-box{background:#fff;border-radius:12px;padding:22px;width:340px;box-shadow:0 20px 50px rgba(0,0,0,0.2);}
+th{background:#e8f5e9;padding:6px 8px;border:1px solid #ccc;font-size:11px;text-align:left;}
+td{border:1px solid #eee;padding:3px 5px;vertical-align:middle;}
+td input[type=text]{border:none;background:transparent;padding:2px 3px;font-size:11px;}
+@media print{
+  .hdr,.tabs,.np{display:none!important;}
+  body{background:#fff;}
+  .tab{display:block!important;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ HEADER PANTALLA ══ -->
-<div class="screen-header np">
-  <div>
-    <div style="font-weight:800;font-size:16px;">🩺 Ficha Médica Ocupacional — MSP Ecuador</div>
-    <div style="font-size:10px;opacity:0.6;">Acuerdo Ministerial 00025-2025 · Dr. Galo Córdova</div>
-  </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button onclick="toggleMedico()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:7px;padding:6px 12px;color:#fff;font-size:11px;cursor:pointer;font-weight:600;">⚙️ Mi perfil</button>
-    <button onclick="window.print()" style="background:#2a7a4b;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;">🖨 Imprimir / PDF</button>
+<div class="hdr">
+  <div><h1>🩺 Ficha Médica Ocupacional — MSP Ecuador</h1><p>Acuerdo Ministerial 00025-2025</p></div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn-gray" style="color:#fff;background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.3);" onclick="openMed()">⚙️ Mi perfil</button>
+    <button class="btn-green" onclick="window.print()">🖨 PDF</button>
   </div>
 </div>
 
-<!-- ══ MODAL MÉDICO ══ -->
-<div id="modal-medico" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:12px;padding:22px;width:340px;box-shadow:0 20px 50px rgba(0,0,0,0.25);">
+<!-- Modal médico -->
+<div class="modal" id="mod-med">
+  <div class="modal-box">
     <div style="font-weight:800;font-size:15px;color:#1e3a5f;margin-bottom:14px;">⚙️ Mis Datos de Médico</div>
-    <div class="fld"><label>Nombres y Apellidos</label><input type="text" id="med-nombre" placeholder="Dr. Galo Córdova Yépez"/></div>
-    <div class="fld"><label>Código Médico MSP</label><input type="text" id="med-codigo" placeholder="Ej: 1234567"/></div>
-    <div class="fld"><label>Especialidad</label><input type="text" id="med-esp" placeholder="Medicina Ocupacional"/></div>
+    <div class="fld"><label>Nombre y Apellido</label><input type="text" id="m-nom" placeholder="Dr. Galo Córdova Yépez"/></div>
+    <div class="fld"><label>Código Médico MSP</label><input type="text" id="m-cod" placeholder="1234567"/></div>
+    <div class="fld"><label>Especialidad</label><input type="text" id="m-esp" placeholder="Medicina Ocupacional"/></div>
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button onclick="saveMedico()" style="background:#2a7a4b;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;">💾 Guardar</button>
-      <button onclick="toggleMedico()" style="background:#f3f4f6;color:#374151;border:1px solid #ddd;border-radius:6px;padding:8px 14px;font-size:12px;cursor:pointer;">Cancelar</button>
+      <button class="btn-green" onclick="saveMed()">💾 Guardar</button>
+      <button class="btn-gray" onclick="closeMed()">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- ══ TABS ══ -->
-<div class="tabs np">
-  <button class="tab-btn active" onclick="showTab(0)">👤 Datos</button>
-  <button class="tab-btn" onclick="showTab(1)">📋 Antec.</button>
-  <button class="tab-btn" onclick="showTab(2)">🩺 Examen</button>
-  <button class="tab-btn" onclick="showTab(3)">⚠️ Riesgos</button>
-  <button class="tab-btn" onclick="showTab(4)">🏭 Laboral</button>
-  <button class="tab-btn" onclick="showTab(5)">🔬 Lab/Dx</button>
-  <button class="tab-btn" onclick="showTab(6)">✅ Aptitud</button>
+<div class="tabs">
+  <button class="tb on" id="tb0" onclick="goTab(0)">👤 Datos</button>
+  <button class="tb" id="tb1" onclick="goTab(1)">📋 Antec.</button>
+  <button class="tb" id="tb2" onclick="goTab(2)">🩺 Examen</button>
+  <button class="tb" id="tb3" onclick="goTab(3)">⚠️ Riesgos</button>
+  <button class="tb" id="tb4" onclick="goTab(4)">🏭 Laboral</button>
+  <button class="tb" id="tb5" onclick="goTab(5)">🔬 Lab/Dx</button>
+  <button class="tb" id="tb6" onclick="goTab(6)">✅ Aptitud</button>
 </div>
 
-<!-- ══════════════════════════════════
-     PANTALLA — TABS
-══════════════════════════════════ -->
-<div class="screen-wrap np">
-
+<div class="wrap">
 <!-- TAB 0 -->
-<div id="st0" class="tab-content">
-  <div class="sh">🏢 A. Empresa / Establecimiento</div>
-  <div class="sb">
-    <div class="fld"><label>Empresa registrada</label><div class="chip-row" id="emp-chips"></div></div>
-    <button onclick="toggleEmpForm()" style="font-size:11px;background:#eff6ff;border:1.5px dashed #3b82f6;border-radius:6px;padding:5px 12px;color:#2563eb;cursor:pointer;font-weight:600;">+ Nueva empresa</button>
+<div id="t0" class="tab">
+  <div class="sec-h">🏢 Empresa / Establecimiento</div>
+  <div class="sec-b">
+    <div class="fld"><label>Empresa registrada</label><div class="chips" id="emp-chips"></div></div>
+    <button class="btn-gray" style="margin-top:4px;" onclick="togEmpForm()">+ Nueva empresa</button>
     <div id="emp-form" style="display:none;margin-top:10px;padding:12px;background:#f8fafc;border:1px solid #ddd;border-radius:7px;">
-      <div class="g2"><div class="fld"><label>Razón Social</label><input type="text" id="ef-nombre"/></div><div class="fld"><label>RUC</label><input type="text" id="ef-ruc"/></div><div class="fld"><label>CIIU</label><input type="text" id="ef-ciiu"/></div><div class="fld"><label>Representante Legal</label><input type="text" id="ef-rep"/></div></div>
+      <div class="g2">
+        <div class="fld"><label>Razón Social</label><input type="text" id="ef-nom"/></div>
+        <div class="fld"><label>RUC</label><input type="text" id="ef-ruc"/></div>
+        <div class="fld"><label>CIIU</label><input type="text" id="ef-ciiu"/></div>
+        <div class="fld"><label>Representante</label><input type="text" id="ef-rep"/></div>
+      </div>
       <div class="fld"><label>Dirección</label><input type="text" id="ef-dir"/></div>
-      <div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveEmpresa()" style="background:#2a7a4b;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;">Guardar</button><button onclick="toggleEmpForm()" style="background:#f3f4f6;color:#555;border:1px solid #ddd;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">Cancelar</button></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-green" onclick="saveEmp()">Guardar</button>
+        <button class="btn-gray" onclick="togEmpForm()">Cancelar</button>
+      </div>
     </div>
     <div id="emp-info" style="display:none;margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;padding:7px 12px;font-size:11px;"></div>
-    <div class="fld" style="margin-top:10px;"><label>Nº Historia Clínica</label><input type="text" id="numHC" style="width:200px;"/></div>
+    <div class="fld" style="margin-top:10px;"><label>Nº Historia Clínica</label><input type="text" id="numHC" style="width:180px;"/></div>
   </div>
-  <div class="sh">👤 Datos del Paciente</div>
-  <div class="sb">
-    <div class="g4"><div class="fld"><label>Primer Apellido</label><input type="text" id="a1"/></div><div class="fld"><label>Segundo Apellido</label><input type="text" id="a2"/></div><div class="fld"><label>Primer Nombre</label><input type="text" id="n1"/></div><div class="fld"><label>Segundo Nombre</label><input type="text" id="n2"/></div></div>
-    <div class="fld"><label>Atención Prioritaria</label><div class="chip-row" id="prio-c"><button class="chip purple" onclick="mc('prio','Embarazada',this)">Embarazada</button><button class="chip purple" onclick="mc('prio','Discapacidad',this)">Discapacidad</button><button class="chip purple" onclick="mc('prio','E. Catastrófica',this)">E. Catastrófica</button><button class="chip purple" onclick="mc('prio','Lactancia',this)">Lactancia</button><button class="chip purple" onclick="mc('prio','Adulto Mayor',this)">Adulto Mayor</button></div></div>
+
+  <div class="sec-h">👤 Datos del Paciente</div>
+  <div class="sec-b">
     <div class="g4">
-      <div class="fld"><label>Sexo</label><div class="chip-row" id="sx-c"><button class="chip" onclick="sc('sexo','Hombre',this,'sx-c')">Hombre</button><button class="chip" onclick="sc('sexo','Mujer',this,'sx-c')">Mujer</button></div></div>
-      <div class="fld"><label>Fecha Nacimiento</label><div style="display:flex;gap:4px;"><input type="text" id="fAno" placeholder="aaaa" style="width:65px;"/><input type="text" id="fMes" placeholder="mm" style="width:45px;"/><input type="text" id="fDia" placeholder="dd" style="width:45px;"/></div></div>
-      <div class="fld"><label>Edad</label><input type="text" id="edad" style="width:65px;"/></div>
+      <div class="fld"><label>Primer Apellido</label><input type="text" id="a1"/></div>
+      <div class="fld"><label>Segundo Apellido</label><input type="text" id="a2"/></div>
+      <div class="fld"><label>Primer Nombre</label><input type="text" id="n1"/></div>
+      <div class="fld"><label>Segundo Nombre</label><input type="text" id="n2"/></div>
+    </div>
+    <div class="fld"><label>Atención Prioritaria</label>
+      <div class="chips">
+        <button class="chip purple" onclick="togM('prio','Embarazada',this)">Embarazada</button>
+        <button class="chip purple" onclick="togM('prio','Discapacidad',this)">Discapacidad</button>
+        <button class="chip purple" onclick="togM('prio','E.Catastrófica',this)">E.Catastrófica</button>
+        <button class="chip purple" onclick="togM('prio','Lactancia',this)">Lactancia</button>
+        <button class="chip purple" onclick="togM('prio','Adulto Mayor',this)">Adulto Mayor</button>
+      </div>
+    </div>
+    <div class="g4">
+      <div class="fld"><label>Sexo</label>
+        <div class="chips">
+          <button class="chip" id="sx-H" onclick="tog1('sexo','Hombre','sx-H','sx-M')">Hombre</button>
+          <button class="chip" id="sx-M" onclick="tog1('sexo','Mujer','sx-M','sx-H')">Mujer</button>
+        </div>
+      </div>
+      <div class="fld"><label>Fecha Nacimiento</label>
+        <div style="display:flex;gap:4px;">
+          <input type="text" id="fAno" placeholder="aaaa" style="width:60px;"/>
+          <input type="text" id="fMes" placeholder="mm" style="width:44px;"/>
+          <input type="text" id="fDia" placeholder="dd" style="width:44px;"/>
+        </div>
+      </div>
+      <div class="fld"><label>Edad</label><input type="text" id="edad" style="width:60px;"/></div>
     </div>
     <div class="g2">
-      <div class="fld"><label>Grupo Sanguíneo</label><div class="chip-row" id="gs-c"><button class="chip red" onclick="sc('gs','A+',this,'gs-c')">A+</button><button class="chip red" onclick="sc('gs','A-',this,'gs-c')">A-</button><button class="chip red" onclick="sc('gs','B+',this,'gs-c')">B+</button><button class="chip red" onclick="sc('gs','B-',this,'gs-c')">B-</button><button class="chip red" onclick="sc('gs','AB+',this,'gs-c')">AB+</button><button class="chip red" onclick="sc('gs','AB-',this,'gs-c')">AB-</button><button class="chip red" onclick="sc('gs','O+',this,'gs-c')">O+</button><button class="chip red" onclick="sc('gs','O-',this,'gs-c')">O-</button></div></div>
-      <div class="fld"><label>Lateralidad</label><div class="chip-row" id="lat-c"><button class="chip" onclick="sc('lat','Diestro',this,'lat-c')">Diestro</button><button class="chip" onclick="sc('lat','Zurdo',this,'lat-c')">Zurdo</button><button class="chip" onclick="sc('lat','Ambidiestro',this,'lat-c')">Ambidiestro</button></div></div>
+      <div class="fld"><label>Grupo Sanguíneo</label>
+        <div class="chips">
+          <button class="chip red" onclick="togGS('A+',this)">A+</button>
+          <button class="chip red" onclick="togGS('A-',this)">A-</button>
+          <button class="chip red" onclick="togGS('B+',this)">B+</button>
+          <button class="chip red" onclick="togGS('B-',this)">B-</button>
+          <button class="chip red" onclick="togGS('AB+',this)">AB+</button>
+          <button class="chip red" onclick="togGS('AB-',this)">AB-</button>
+          <button class="chip red" onclick="togGS('O+',this)">O+</button>
+          <button class="chip red" onclick="togGS('O-',this)">O-</button>
+        </div>
+      </div>
+      <div class="fld"><label>Lateralidad</label>
+        <div class="chips">
+          <button class="chip" id="lat-D" onclick="togLat('Diestro','lat-D','lat-Z','lat-A')">Diestro</button>
+          <button class="chip" id="lat-Z" onclick="togLat('Zurdo','lat-Z','lat-D','lat-A')">Zurdo</button>
+          <button class="chip" id="lat-A" onclick="togLat('Ambidiestro','lat-A','lat-D','lat-Z')">Ambidiestro</button>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="sh">📝 B. Motivo de Consulta</div>
-  <div class="sb">
-    <div class="g2"><div class="fld"><label>Puesto de Trabajo (CIUO)</label><input type="text" id="puesto"/></div><div class="fld"><label>Fecha de Atención</label><input type="date" id="fAten"/></div></div>
-    <div class="fld"><label>Tipo de Evaluación</label><div class="chip-row" id="te-c"><button class="chip lg" onclick="sc('tipoEval','Ingreso',this,'te-c')">Ingreso</button><button class="chip lg" onclick="sc('tipoEval','Periódico',this,'te-c')">Periódico</button><button class="chip lg" onclick="sc('tipoEval','Reingreso',this,'te-c')">Reingreso</button><button class="chip lg" onclick="sc('tipoEval','Retiro',this,'te-c')">Retiro</button></div></div>
-    <div class="g2"><div class="fld"><label>Fecha Ingreso al Trabajo</label><input type="date" id="fIng"/></div><div class="fld"><label>Fecha Último Día Laboral</label><input type="date" id="fUlt"/></div></div>
+
+  <div class="sec-h">📝 B. Motivo de Consulta</div>
+  <div class="sec-b">
+    <div class="g2">
+      <div class="fld"><label>Puesto de Trabajo CIUO</label><input type="text" id="puesto"/></div>
+      <div class="fld"><label>Fecha de Atención</label><input type="date" id="fAten"/></div>
+    </div>
+    <div class="fld"><label>Tipo de Evaluación</label>
+      <div class="chips">
+        <button class="chip lg" id="te-I" onclick="togTE('Ingreso','te-I','te-P','te-R','te-S')">Ingreso</button>
+        <button class="chip lg" id="te-P" onclick="togTE('Periódico','te-P','te-I','te-R','te-S')">Periódico</button>
+        <button class="chip lg" id="te-R" onclick="togTE('Reingreso','te-R','te-I','te-P','te-S')">Reingreso</button>
+        <button class="chip lg" id="te-S" onclick="togTE('Retiro','te-S','te-I','te-P','te-R')">Retiro</button>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label>Fecha Ingreso al Trabajo</label><input type="date" id="fIng"/></div>
+      <div class="fld"><label>Fecha Último Día Laboral</label><input type="date" id="fUlt"/></div>
+    </div>
     <div class="fld"><label>Observación</label><textarea id="obsB" rows="2"></textarea></div>
   </div>
 </div>
 
 <!-- TAB 1 -->
-<div id="st1" class="tab-content" style="display:none;">
-  <div class="sh">📋 C. Antecedentes Personales</div>
-  <div class="sb">
-    <div class="subh">Antecedentes Clínicos y Quirúrgicos</div>
-    <textarea id="antC" rows="2" placeholder="HTA, DM2, cirugías previas..." style="width:100%;"></textarea>
-    <div class="subh">Antecedentes Familiares</div>
+<div id="t1" class="tab" style="display:none;">
+  <div class="sec-h">📋 C. Antecedentes Personales</div>
+  <div class="sec-b">
+    <div class="sub">Antecedentes Clínicos y Quirúrgicos</div>
+    <textarea id="antC" rows="2" placeholder="HTA, DM2, cirugías..." style="width:100%;"></textarea>
+    <div class="sub">Antecedentes Familiares</div>
     <textarea id="antF" rows="2" placeholder="DM, HTA, cardiopatías..." style="width:100%;"></textarea>
     <div class="g2" style="margin-top:10px;">
-      <div class="fld"><label>Autoriza transfusiones</label><div class="chip-row" id="transf-c"><button class="chip" onclick="sc('transf','Sí',this,'transf-c')">Sí</button><button class="chip" onclick="sc('transf','No',this,'transf-c')">No</button></div></div>
-      <div><div class="fld"><label>Bajo tratamiento hormonal</label><div class="chip-row" id="tratH-c"><button class="chip" onclick="sc('tratH','Sí',this,'tratH-c')">Sí</button><button class="chip" onclick="sc('tratH','No',this,'tratH-c')">No</button></div></div><input type="text" id="tratHd" placeholder="¿Cuál?" style="display:none;margin-top:4px;"/></div>
+      <div class="fld"><label>Autoriza transfusiones</label>
+        <div class="chips">
+          <button class="chip" id="tr-S" onclick="togSN('transf','Si','tr-S','tr-N')">Sí</button>
+          <button class="chip" id="tr-N" onclick="togSN('transf','No','tr-N','tr-S')">No</button>
+        </div>
+      </div>
+      <div>
+        <div class="fld"><label>Tratamiento hormonal</label>
+          <div class="chips">
+            <button class="chip" id="th-S" onclick="togSN('tratH','Si','th-S','th-N');showTratH()">Sí</button>
+            <button class="chip" id="th-N" onclick="togSN('tratH','No','th-N','th-S');hideTratH()">No</button>
+          </div>
+        </div>
+        <input type="text" id="tratHd" placeholder="¿Cuál?" style="display:none;margin-top:4px;"/>
+      </div>
     </div>
-    <div class="subh">Consumo de Sustancias</div>
-    <div style="margin-bottom:8px;"><div style="font-weight:700;font-size:11px;color:#374151;margin-bottom:4px;">TABACO</div>
-    <div class="g4"><div class="fld"><label>Tiempo consumo</label><input type="text" id="tab-t" placeholder="meses"/></div><div class="fld"><label>Ex consumidor</label><div class="chip-row" id="tabExC-c"><button class="chip" onclick="sc('tabExC','Sí',this,'tabExC-c')">Sí</button><button class="chip" onclick="sc('tabExC','No',this,'tabExC-c')">No</button></div></div><div class="fld"><label>Abstinencia</label><input type="text" id="tab-abs" placeholder="meses"/></div><div class="fld"><label>No consume</label><div class="chip-row" id="tabNoC-c"><button class="chip" onclick="sc('tabNoC','Sí',this,'tabNoC-c')">Sí</button><button class="chip" onclick="sc('tabNoC','No',this,'tabNoC-c')">No</button></div></div></div></div>
-    <div style="margin-bottom:8px;"><div style="font-weight:700;font-size:11px;color:#374151;margin-bottom:4px;">ALCOHOL</div>
-    <div class="g4"><div class="fld"><label>Tiempo consumo</label><input type="text" id="alc-t" placeholder="meses"/></div><div class="fld"><label>Ex consumidor</label><div class="chip-row" id="alcExC-c"><button class="chip" onclick="sc('alcExC','Sí',this,'alcExC-c')">Sí</button><button class="chip" onclick="sc('alcExC','No',this,'alcExC-c')">No</button></div></div><div class="fld"><label>Abstinencia</label><input type="text" id="alc-abs" placeholder="meses"/></div><div class="fld"><label>No consume</label><div class="chip-row" id="alcNoC-c"><button class="chip" onclick="sc('alcNoC','Sí',this,'alcNoC-c')">Sí</button><button class="chip" onclick="sc('alcNoC','No',this,'alcNoC-c')">No</button></div></div></div></div>
-    <div class="g3"><div class="fld"><label>Actividad Física</label><input type="text" id="actF" placeholder="Tipo y frecuencia"/></div><div class="fld"><label>Medicación Habitual</label><input type="text" id="medH" placeholder="Medicamentos actuales"/></div><div class="fld"><label>Condición Preexistente</label><input type="text" id="condP" placeholder="HTA, DM2..."/></div></div>
+    <div class="sub">Consumo de Sustancias</div>
+    <div style="font-weight:700;font-size:11px;margin-bottom:5px;">TABACO</div>
+    <div class="g4">
+      <div class="fld"><label>Tiempo (meses)</label><input type="text" id="tab-t"/></div>
+      <div class="fld"><label>Ex consumidor</label>
+        <div class="chips">
+          <button class="chip" id="txS" onclick="togSN('tabExC','Si','txS','txN')">Sí</button>
+          <button class="chip" id="txN" onclick="togSN('tabExC','No','txN','txS')">No</button>
+        </div>
+      </div>
+      <div class="fld"><label>Abstinencia (meses)</label><input type="text" id="tab-abs"/></div>
+      <div class="fld"><label>No consume</label>
+        <div class="chips">
+          <button class="chip" id="tnS" onclick="togSN('tabNoC','Si','tnS','tnN')">Sí</button>
+          <button class="chip" id="tnN" onclick="togSN('tabNoC','No','tnN','tnS')">No</button>
+        </div>
+      </div>
+    </div>
+    <div style="font-weight:700;font-size:11px;margin:8px 0 5px;">ALCOHOL</div>
+    <div class="g4">
+      <div class="fld"><label>Tiempo (meses)</label><input type="text" id="alc-t"/></div>
+      <div class="fld"><label>Ex consumidor</label>
+        <div class="chips">
+          <button class="chip" id="axS" onclick="togSN('alcExC','Si','axS','axN')">Sí</button>
+          <button class="chip" id="axN" onclick="togSN('alcExC','No','axN','axS')">No</button>
+        </div>
+      </div>
+      <div class="fld"><label>Abstinencia (meses)</label><input type="text" id="alc-abs"/></div>
+      <div class="fld"><label>No consume</label>
+        <div class="chips">
+          <button class="chip" id="anS" onclick="togSN('alcNoC','Si','anS','anN')">Sí</button>
+          <button class="chip" id="anN" onclick="togSN('alcNoC','No','anN','anS')">No</button>
+        </div>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:8px;">
+      <div class="fld"><label>Actividad Física</label><input type="text" id="actF" placeholder="Tipo y frecuencia"/></div>
+      <div class="fld"><label>Medicación Habitual</label><input type="text" id="medH"/></div>
+      <div class="fld"><label>Condición Preexistente</label><input type="text" id="condP" placeholder="HTA, DM2..."/></div>
+    </div>
     <div class="fld"><label>Observación</label><textarea id="obsC" rows="2"></textarea></div>
   </div>
 </div>
 
 <!-- TAB 2 -->
-<div id="st2" class="tab-content" style="display:none;">
-  <div class="sh">🩺 D. Enfermedad o Problema Actual</div>
-  <div class="sb"><textarea id="enf" rows="3" placeholder="Motivo de consulta, tiempo de evolución, síntomas..." style="width:100%;"></textarea></div>
-  <div class="sh">📊 E. Constantes Vitales y Antropometría</div>
-  <div class="sb">
-    <div class="g5"><div class="fld"><label>Temp. °C</label><input type="text" id="temp" placeholder="36.5"/></div><div class="fld"><label>P. Arterial mmHg</label><input type="text" id="pa" placeholder="120/80"/></div><div class="fld"><label>FC lpm</label><input type="text" id="fc" placeholder="72"/></div><div class="fld"><label>FR rpm</label><input type="text" id="fr" placeholder="16"/></div><div class="fld"><label>SatO2 %</label><input type="text" id="sat" placeholder="98"/></div></div>
-    <div class="g4"><div class="fld"><label>Peso kg</label><input type="text" id="peso" placeholder="70"/></div><div class="fld"><label>Talla cm</label><input type="text" id="talla" placeholder="170"/></div><div class="fld"><label>IMC kg/m²</label><div style="display:flex;gap:5px;"><input type="text" id="imc" placeholder="24.2"/><button onclick="calcIMC()" style="background:#2a7a4b;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">Calc</button></div></div><div class="fld"><label>P. Abdominal cm</label><input type="text" id="perab" placeholder="88"/></div></div>
+<div id="t2" class="tab" style="display:none;">
+  <div class="sec-h">🩺 D. Enfermedad o Problema Actual</div>
+  <div class="sec-b"><textarea id="enf" rows="3" style="width:100%;" placeholder="Motivo, tiempo evolución, síntomas..."></textarea></div>
+  <div class="sec-h">📊 E. Constantes Vitales</div>
+  <div class="sec-b">
+    <div class="g5">
+      <div class="fld"><label>Temp °C</label><input type="text" id="temp" placeholder="36.5"/></div>
+      <div class="fld"><label>PA mmHg</label><input type="text" id="pa" placeholder="120/80"/></div>
+      <div class="fld"><label>FC lpm</label><input type="text" id="fc" placeholder="72"/></div>
+      <div class="fld"><label>FR rpm</label><input type="text" id="fr" placeholder="16"/></div>
+      <div class="fld"><label>SatO2 %</label><input type="text" id="sat" placeholder="98"/></div>
+    </div>
+    <div class="g4">
+      <div class="fld"><label>Peso kg</label><input type="text" id="peso"/></div>
+      <div class="fld"><label>Talla cm</label><input type="text" id="talla"/></div>
+      <div class="fld"><label>IMC kg/m²</label>
+        <div style="display:flex;gap:5px;">
+          <input type="text" id="imc"/>
+          <button class="btn-green" onclick="calcIMC()" style="padding:5px 10px;font-size:11px;">Calc</button>
+        </div>
+      </div>
+      <div class="fld"><label>P.Abdominal cm</label><input type="text" id="perab"/></div>
+    </div>
   </div>
-  <div class="sh">🔍 F. Examen Físico Regional</div>
-  <div class="sb">
-    <div id="regiones-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+  <div class="sec-h">🔍 F. Examen Físico Regional</div>
+  <div class="sec-b">
+    <div id="reg-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
     <div class="fld" style="margin-top:10px;"><label>Observaciones</label><textarea id="obsF" rows="2"></textarea></div>
   </div>
 </div>
 
 <!-- TAB 3 -->
-<div id="st3" class="tab-content" style="display:none;">
-  <div class="sh">⚠️ G. Factores de Riesgo del Trabajo Actual</div>
-  <div class="sb">
-    <div class="fld"><label>Actividades principales en la jornada laboral</label><textarea id="actJ" rows="2"></textarea></div>
-    <div id="factores-grid"></div>
+<div id="t3" class="tab" style="display:none;">
+  <div class="sec-h">⚠️ G. Factores de Riesgo</div>
+  <div class="sec-b">
+    <div class="fld"><label>Actividades principales en la jornada</label><textarea id="actJ" rows="2"></textarea></div>
+    <div id="fact-grid"></div>
     <div class="fld"><label>Medidas Preventivas</label><textarea id="medPrev" rows="2"></textarea></div>
   </div>
 </div>
 
 <!-- TAB 4 -->
-<div id="st4" class="tab-content" style="display:none;">
-  <div class="sh">🏭 H. Antecedentes Laborales</div>
-  <div class="sb" style="overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:700px;">
-      <thead><tr style="background:#e8f5e9;"><th style="padding:6px;border:1px solid #ccc;text-align:left;">Centro de Trabajo</th><th style="padding:6px;border:1px solid #ccc;">Actividades</th><th style="padding:6px;border:1px solid #ccc;">Ant</th><th style="padding:6px;border:1px solid #ccc;">Act</th><th style="padding:6px;border:1px solid #ccc;">Tiempo</th><th style="padding:6px;border:1px solid #ccc;">Inc</th><th style="padding:6px;border:1px solid #ccc;">Acc</th><th style="padding:6px;border:1px solid #ccc;">Enf.Prof</th><th style="padding:6px;border:1px solid #ccc;">IESS Sí</th><th style="padding:6px;border:1px solid #ccc;">IESS No</th><th style="padding:6px;border:1px solid #ccc;">Especificar</th></tr></thead>
+<div id="t4" class="tab" style="display:none;">
+  <div class="sec-h">🏭 H. Antecedentes Laborales</div>
+  <div class="sec-b" style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;min-width:680px;">
+      <thead><tr>
+        <th>Centro de Trabajo</th><th>Actividades</th>
+        <th>Ant</th><th>Act</th><th>Tiempo</th>
+        <th>Inc</th><th>Acc</th><th>Enf</th>
+        <th>IESS Si</th><th>IESS No</th><th>Especificar</th>
+      </tr></thead>
       <tbody id="lab-body"></tbody>
     </table>
-  </div>
-  <div class="sh" style="margin-top:10px;">I. Actividades Extra Laborales</div>
-  <div class="sb">
-    <div id="extra-body"></div>
   </div>
 </div>
 
 <!-- TAB 5 -->
-<div id="st5" class="tab-content" style="display:none;">
-  <div class="sh">🔬 J. Exámenes</div>
-  <div class="sb">
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead><tr style="background:#e8f5e9;"><th style="padding:6px;border:1px solid #ccc;text-align:left;">Nombre del Examen</th><th style="padding:6px;border:1px solid #ccc;width:140px;">Fecha</th><th style="padding:6px;border:1px solid #ccc;width:45%;">Resultados</th></tr></thead>
+<div id="t5" class="tab" style="display:none;">
+  <div class="sec-h">🔬 J. Exámenes</div>
+  <div class="sec-b">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th>Nombre del Examen</th>
+        <th style="width:130px;">Fecha</th>
+        <th style="width:45%;">Resultados</th>
+      </tr></thead>
       <tbody id="exam-body"></tbody>
     </table>
     <div class="fld" style="margin-top:8px;"><label>Observaciones</label><textarea id="obsJ" rows="2"></textarea></div>
   </div>
-  <div class="sh">🏥 K. Diagnóstico CIE-10</div>
-  <div class="sb">
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead><tr style="background:#e8f5e9;"><th style="padding:6px;border:1px solid #ccc;width:30px;">#</th><th style="padding:6px;border:1px solid #ccc;">Buscar CIE-10 — escriba código o nombre</th><th style="padding:6px;border:1px solid #ccc;width:55px;text-align:center;">PRE</th><th style="padding:6px;border:1px solid #ccc;width:55px;text-align:center;">DEF</th></tr></thead>
+  <div class="sec-h">🏥 K. Diagnóstico CIE-10</div>
+  <div class="sec-b">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="width:28px;">#</th>
+        <th>Buscar CIE-10 — código o nombre</th>
+        <th style="width:50px;text-align:center;">PRE</th>
+        <th style="width:50px;text-align:center;">DEF</th>
+      </tr></thead>
       <tbody id="dx-body"></tbody>
     </table>
   </div>
 </div>
 
 <!-- TAB 6 -->
-<div id="st6" class="tab-content" style="display:none;">
-  <div class="sh">✅ L. Aptitud Médica para el Trabajo</div>
-  <div class="sb">
+<div id="t6" class="tab" style="display:none;">
+  <div class="sec-h">✅ L. Aptitud Médica para el Trabajo</div>
+  <div class="sec-b">
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-      <button class="apt-btn" onclick="setApt('APTO',this)" style="color:#16a34a;border-color:#16a34a;">✅ APTO</button>
-      <button class="apt-btn" onclick="setApt('APTO EN OBSERVACIÓN',this)" style="color:#d97706;border-color:#d97706;">⚠️ APTO EN OBSERVACIÓN</button>
-      <button class="apt-btn" onclick="setApt('APTO CON LIMITACIONES',this)" style="color:#2563eb;border-color:#2563eb;">🔵 APTO CON LIMITACIONES</button>
-      <button class="apt-btn" onclick="setApt('NO APTO',this)" style="color:#dc2626;border-color:#dc2626;">❌ NO APTO</button>
+      <button class="apt-btn" id="apt-A" onclick="setApt('APTO','apt-A')" style="color:#16a34a;border-color:#16a34a;">✅ APTO</button>
+      <button class="apt-btn" id="apt-O" onclick="setApt('APTO EN OBSERVACION','apt-O')" style="color:#d97706;border-color:#d97706;">⚠️ APTO EN OBSERVACIÓN</button>
+      <button class="apt-btn" id="apt-L" onclick="setApt('APTO CON LIMITACIONES','apt-L')" style="color:#2563eb;border-color:#2563eb;">🔵 APTO CON LIMITACIONES</button>
+      <button class="apt-btn" id="apt-N" onclick="setApt('NO APTO','apt-N')" style="color:#dc2626;border-color:#dc2626;">❌ NO APTO</button>
     </div>
-    <div id="apt-result" style="display:none;padding:8px 14px;border-radius:7px;font-weight:700;font-size:15px;margin-bottom:10px;"></div>
+    <div id="apt-res" style="display:none;padding:8px 14px;border-radius:7px;font-weight:700;font-size:15px;margin-bottom:10px;"></div>
     <div class="fld"><label>Observaciones</label><textarea id="obsApt" rows="2"></textarea></div>
   </div>
-  <div class="sh">📝 M. Recomendaciones y/o Tratamiento</div>
-  <div class="sb">
-    <div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;">Insertar con un clic:</div>
-    <div id="recom-grid"></div>
-    <textarea id="recom" rows="5" placeholder="Las recomendaciones aparecerán aquí..." style="width:100%;margin-top:8px;"></textarea>
+
+  <div class="sec-h">📝 M. Recomendaciones</div>
+  <div class="sec-b">
+    <div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Insertar con un clic:</div>
+    <div id="recom-btns"></div>
+    <textarea id="recom" rows="5" style="width:100%;margin-top:8px;" placeholder="Las recomendaciones aparecerán aquí..."></textarea>
     <div style="margin-top:10px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:8px;padding:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-weight:700;color:#166534;font-size:12px;">✨ Sugerencias IA (Groq)</span><button onclick="genIA()" id="ia-btn" style="background:#2a7a4b;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;">Generar con IA</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;color:#166534;font-size:12px;">✨ Sugerencias IA (Groq)</span>
+        <button class="btn-green" onclick="genIA()" id="ia-btn" style="padding:6px 14px;font-size:11px;">Generar con IA</button>
+      </div>
       <div id="ia-err" style="color:#dc2626;font-size:11px;display:none;margin-bottom:6px;"></div>
       <div id="ia-res"></div>
     </div>
   </div>
-  <div class="sh">🔄 N. Retiro / Evaluación</div>
-  <div class="sb">
+
+  <div class="sec-h">🔄 N. Retiro / Evaluación</div>
+  <div class="sec-b">
     <div class="g2">
-      <div class="fld"><label>Se realiza la evaluación</label><div class="chip-row" id="evalR-c"><button class="chip" onclick="sc('evalR','Sí',this,'evalR-c')">Sí</button><button class="chip" onclick="sc('evalR','No',this,'evalR-c')">No</button></div></div>
-      <div class="fld"><label>Condición relacionada con el trabajo</label><div class="chip-row" id="condR-c"><button class="chip" onclick="sc('condR','Sí',this,'condR-c')">Sí</button><button class="chip" onclick="sc('condR','No',this,'condR-c')">No</button></div></div>
+      <div class="fld"><label>Se realiza la evaluación</label>
+        <div class="chips">
+          <button class="chip" id="ev-S" onclick="togSN('evalR','Si','ev-S','ev-N')">Sí</button>
+          <button class="chip" id="ev-N" onclick="togSN('evalR','No','ev-N','ev-S')">No</button>
+        </div>
+      </div>
+      <div class="fld"><label>Condición relacionada con el trabajo</label>
+        <div class="chips">
+          <button class="chip" id="cr-S" onclick="togSN('condR','Si','cr-S','cr-N')">Sí</button>
+          <button class="chip" id="cr-N" onclick="togSN('condR','No','cr-N','cr-S')">No</button>
+        </div>
+      </div>
     </div>
     <div class="fld"><label>Observación</label><textarea id="obsN" rows="2"></textarea></div>
   </div>
-  <div class="sh">👨‍⚕️ O. Datos del Profesional / P. Firma</div>
-  <div class="sb">
-    <div class="g3"><div class="fld"><label>Nombre del Profesional</label><input type="text" id="pnombre"/></div><div class="fld"><label>Código Médico MSP</label><input type="text" id="pcodigo"/></div><div class="fld"><label>Especialidad</label><input type="text" id="pesp"/></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;"><div style="height:56px;border:1.5px dashed #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;">Firma y sello del médico</div><div style="height:56px;border:1.5px dashed #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;">Firma del trabajador</div></div>
-  </div>
-  <div style="text-align:center;margin-top:18px;padding-bottom:24px;"><button onclick="window.print()" style="background:#1e3a5f;color:#fff;border:none;border-radius:9px;padding:12px 36px;font-size:14px;font-weight:700;cursor:pointer;">🖨 Imprimir / Exportar PDF</button></div>
-</div>
-</div><!-- end screen-wrap -->
 
-<!-- ══════════════════════════════════
-     ÁREA DE IMPRESIÓN — Formato MSP oficial
-══════════════════════════════════ -->
-<div id="print-area" style="display:none;">
-
-<!-- PÁGINA 1 -->
-<div class="form-page">
-  <div class="f-title">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL</div>
-
-  <div class="f-section">
-    <div class="f-sec-title">A. DATOS DEL ESTABLECIMIENTO - DATOS DEL USUARIO</div>
-    <div style="display:grid;grid-template-columns:3fr 1.5fr 1fr 2fr 1fr 1fr;border-top:1px solid #c8dac8;">
-      <div class="f-cell f-cell-label">INSTITUCIÓN DEL SISTEMA</div>
-      <div class="f-cell f-cell-label">RUC</div>
-      <div class="f-cell f-cell-label">CIIU</div>
-      <div class="f-cell f-cell-label">ESTABLECIMIENTO/CENTRO DE TRABAJO</div>
-      <div class="f-cell f-cell-label">Nº HISTORIA CLÍNICA</div>
-      <div class="f-cell f-cell-label">Nº ARCHIVO</div>
+  <div class="sec-h">👨‍⚕️ O. Datos del Profesional</div>
+  <div class="sec-b">
+    <div class="g3">
+      <div class="fld"><label>Nombre y Apellido</label><input type="text" id="pnom"/></div>
+      <div class="fld"><label>Código Médico MSP</label><input type="text" id="pcod"/></div>
+      <div class="fld"><label>Especialidad</label><input type="text" id="pesp"/></div>
     </div>
-    <div style="display:grid;grid-template-columns:3fr 1.5fr 1fr 2fr 1fr 1fr;">
-      <div class="f-cell f-cell-value" id="p-inst"></div>
-      <div class="f-cell f-cell-value" id="p-ruc"></div>
-      <div class="f-cell f-cell-value" id="p-ciiu"></div>
-      <div class="f-cell f-cell-value" id="p-centro"></div>
-      <div class="f-cell f-cell-value" id="p-hc"></div>
-      <div class="f-cell f-cell-value" id="p-arch"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid #c8dac8;">
-      <div class="f-cell f-cell-label">PRIMER APELLIDO</div>
-      <div class="f-cell f-cell-label">SEGUNDO APELLIDO</div>
-      <div class="f-cell f-cell-label">PRIMER NOMBRE</div>
-      <div class="f-cell f-cell-label">SEGUNDO NOMBRE</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
-      <div class="f-cell f-cell-value" id="p-a1"></div>
-      <div class="f-cell f-cell-value" id="p-a2"></div>
-      <div class="f-cell f-cell-value" id="p-n1"></div>
-      <div class="f-cell f-cell-value" id="p-n2"></div>
-    </div>
-    <div style="display:flex;border-top:1px solid #c8dac8;flex-wrap:wrap;">
-      <div style="flex:2;padding:2px 5px;"><span class="f-cell-label" style="font-size:7pt;font-weight:700;">GRUPO ATENCIÓN PRIORITARIA: </span><span id="p-prio" style="font-size:7.5pt;"></span></div>
-      <div style="flex:1;padding:2px 5px;border-left:1px solid #c8dac8;"><span class="f-cell-label" style="font-size:7pt;font-weight:700;">SEXO: </span><span id="p-sexo" style="font-size:7.5pt;font-weight:700;"></span></div>
-      <div style="flex:1.5;padding:2px 5px;border-left:1px solid #c8dac8;"><span class="f-cell-label" style="font-size:7pt;font-weight:700;">FECHA NAC.: </span><span id="p-fnac" style="font-size:7.5pt;"></span> <span class="f-cell-label">EDAD: </span><span id="p-edad" style="font-size:7.5pt;font-weight:700;"></span></div>
-      <div style="flex:1;padding:2px 5px;border-left:1px solid #c8dac8;"><span class="f-cell-label" style="font-size:7pt;font-weight:700;">GS: </span><span id="p-gs" style="font-size:8pt;font-weight:700;color:#dc2626;"></span></div>
-      <div style="flex:1;padding:2px 5px;border-left:1px solid #c8dac8;"><span class="f-cell-label" style="font-size:7pt;font-weight:700;">LATERALIDAD: </span><span id="p-lat" style="font-size:7.5pt;"></span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+      <div style="height:55px;border:1.5px dashed #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;">Firma y sello del médico</div>
+      <div style="height:55px;border:1.5px dashed #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;">Firma del trabajador</div>
     </div>
   </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">B. MOTIVO DE CONSULTA</div>
-    <div style="display:grid;grid-template-columns:2fr 1fr;border-top:1px solid #c8dac8;">
-      <div class="f-cell f-cell-label">PUESTO DE TRABAJO CIUO</div>
-      <div class="f-cell f-cell-label">FECHA DE ATENCIÓN</div>
-    </div>
-    <div style="display:grid;grid-template-columns:2fr 1fr;">
-      <div class="f-cell f-cell-value" id="p-puesto"></div>
-      <div class="f-cell f-cell-value" id="p-faten"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #c8dac8;">
-      <div class="f-cell f-cell-label">FECHA INGRESO AL TRABAJO</div>
-      <div class="f-cell f-cell-label">FECHA REINTEGRO</div>
-      <div class="f-cell f-cell-label">FECHA ÚLTIMO DÍA LABORAL</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
-      <div class="f-cell f-cell-value" id="p-fing"></div>
-      <div class="f-cell f-cell-value"></div>
-      <div class="f-cell f-cell-value" id="p-fult"></div>
-    </div>
-    <div style="border-top:1px solid #c8dac8;padding:3px 6px;background:#e8f5e9;">
-      <span style="font-size:7.5pt;font-weight:700;margin-right:8px;">TIPO DE EVALUACIÓN:</span>
-      <span id="p-tipoeval" style="font-weight:700;font-size:8pt;border:1px solid #333;padding:1px 8px;"></span>
-    </div>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;min-height:16px;"><span style="font-size:7pt;font-weight:700;">Observación: </span><span id="p-obsb" style="font-size:7.5pt;"></span></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">C. ANTECEDENTES PERSONALES</div>
-    <div class="f-subsec-title">ANTECEDENTES CLÍNICOS Y QUIRÚRGICOS</div>
-    <div style="padding:3px 6px;min-height:22px;font-size:7.5pt;" id="p-antc"></div>
-    <div class="f-subsec-title">ANTECEDENTES FAMILIARES</div>
-    <div style="padding:3px 6px;min-height:22px;font-size:7.5pt;" id="p-antf"></div>
-    <div style="border-top:1px solid #c8dac8;padding:3px 6px;display:flex;gap:16px;flex-wrap:wrap;font-size:7.5pt;">
-      <span><b>Autoriza transfusiones:</b> <span id="p-transf"></span></span>
-      <span><b>Trat. hormonal:</b> <span id="p-trath"></span></span>
-    </div>
-    <div class="f-subsec-title">CONSUMO DE SUSTANCIAS</div>
-    <table class="f-table"><thead><tr><th>Sustancia</th><th>Tiempo consumo</th><th>Ex consumidor</th><th>T. Abstinencia</th><th>No consume</th></tr></thead>
-    <tbody><tr><td>TABACO</td><td id="p-tabt"></td><td id="p-tabexc"></td><td id="p-tababs"></td><td id="p-tabnoc"></td></tr>
-    <tr><td>ALCOHOL</td><td id="p-alct"></td><td id="p-alcexc"></td><td id="p-alcabs"></td><td id="p-alcnoc"></td></tr></tbody></table>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #c8dac8;">
-      <div style="padding:2px 5px;font-size:7.5pt;"><b>Act. Física:</b> <span id="p-actf"></span></div>
-      <div style="padding:2px 5px;border-left:1px solid #c8dac8;font-size:7.5pt;"><b>Medicación habitual:</b> <span id="p-medh"></span></div>
-      <div style="padding:2px 5px;border-left:1px solid #c8dac8;font-size:7.5pt;"><b>Condición preexistente:</b> <span id="p-condp"></span></div>
-    </div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">D. ENFERMEDAD O PROBLEMA ACTUAL</div>
-    <div style="padding:3px 6px;min-height:28px;font-size:7.5pt;" id="p-enf"></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">E. CONSTANTES VITALES Y ANTROPOMETRÍA</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;border-top:1px solid #c8dac8;">
-      <div class="f-cell f-cell-label" style="font-size:6.5pt;">TEMP. °C</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">P.A. mmHg</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">FC lpm</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">FR rpm</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">SatO2%</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">PESO kg</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">TALLA cm</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">IMC kg/m²</div><div class="f-cell f-cell-label" style="font-size:6.5pt;">P.ABD cm</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;">
-      <div class="f-cell f-cell-value" id="p-temp"></div><div class="f-cell f-cell-value" id="p-pa"></div><div class="f-cell f-cell-value" id="p-fc"></div><div class="f-cell f-cell-value" id="p-fr"></div><div class="f-cell f-cell-value" id="p-sat"></div><div class="f-cell f-cell-value" id="p-peso"></div><div class="f-cell f-cell-value" id="p-talla"></div><div class="f-cell f-cell-value" id="p-imc"></div><div class="f-cell f-cell-value" id="p-perab"></div>
-    </div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">F. EXAMEN FÍSICO REGIONAL</div>
-    <div id="p-regiones" style="padding:4px 6px;font-size:7.5pt;"></div>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;min-height:16px;font-size:7.5pt;"><b>Observaciones: </b><span id="p-obsf"></span></div>
+  <div style="text-align:center;margin:18px 0 24px;">
+    <button class="btn-green" onclick="window.print()" style="padding:12px 36px;font-size:14px;">🖨 Imprimir / Exportar PDF</button>
   </div>
 </div>
 
-<!-- PÁGINA 2 -->
-<div class="form-page">
-  <div class="f-title">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL — PÁGINA 2</div>
-
-  <div class="f-section">
-    <div class="f-sec-title">G. FACTORES DE RIESGO DEL TRABAJO ACTUAL</div>
-    <div style="padding:3px 6px;min-height:16px;font-size:7.5pt;border-top:1px solid #c8dac8;"><b>Actividades en la jornada: </b><span id="p-actj"></span></div>
-    <div id="p-factores" style="padding:4px 6px;font-size:7.5pt;"></div>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;min-height:16px;font-size:7.5pt;"><b>Medidas Preventivas: </b><span id="p-medprev"></span></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">H. ACTIVIDAD LABORAL / INCIDENTES / ACCIDENTES / ENFERMEDADES OCUPACIONALES</div>
-    <div class="f-subsec-title">ANTECEDENTES DE EMPLEOS ANTERIORES Y/O TRABAJO ACTUAL</div>
-    <table class="f-table" id="p-lab-table">
-      <thead><tr><th>Centro de Trabajo</th><th>Actividades</th><th>Ant.</th><th>Act.</th><th>Tiempo</th><th>Inc.</th><th>Acc.</th><th>Enf.Prof.</th><th>IESS Sí</th><th>IESS No</th><th>Especificar</th></tr></thead>
-      <tbody id="p-lab-body"></tbody>
-    </table>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">I. ACTIVIDADES EXTRA LABORALES</div>
-    <div style="display:grid;grid-template-columns:2fr 1fr;border-top:1px solid #c8dac8;"><div class="f-cell f-cell-label">TIPO DE ACTIVIDAD / DESCRIPCIÓN</div><div class="f-cell f-cell-label">FECHA</div></div>
-    <div id="p-extra" style="min-height:20px;padding:3px 6px;font-size:7.5pt;"></div>
-  </div>
-</div>
-
-<!-- PÁGINA 3 -->
-<div class="form-page">
-  <div class="f-title">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL — PÁGINA 3</div>
-
-  <div class="f-section">
-    <div class="f-sec-title">J. RESULTADOS DE EXÁMENES GENERALES Y ESPECÍFICOS</div>
-    <table class="f-table" id="p-exam-table">
-      <thead><tr><th style="width:35%;">NOMBRE DEL EXAMEN</th><th style="width:15%;">FECHA</th><th>RESULTADOS</th></tr></thead>
-      <tbody id="p-exam-body"></tbody>
-    </table>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;font-size:7.5pt;"><b>Observaciones: </b><span id="p-obsj"></span></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">K. DIAGNÓSTICO &nbsp;&nbsp; PRE: PRESUNTIVO &nbsp;&nbsp; DEF: DEFINITIVO</div>
-    <table class="f-table">
-      <thead><tr><th style="width:30px;">#</th><th style="width:18%;">CIE-10</th><th>DESCRIPCIÓN</th><th style="width:40px;">PRE</th><th style="width:40px;">DEF</th></tr></thead>
-      <tbody id="p-dx-body"></tbody>
-    </table>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">L. APTITUD MÉDICA PARA EL TRABAJO</div>
-    <div style="padding:6px 8px;border-top:1px solid #c8dac8;display:flex;gap:16px;align-items:center;">
-      <div id="p-apt-apto" class="f-chip-result">APTO</div>
-      <div id="p-apt-obs" class="f-chip-result">APTO EN OBSERVACIÓN</div>
-      <div id="p-apt-lim" class="f-chip-result">APTO CON LIMITACIONES</div>
-      <div id="p-apt-no" class="f-chip-result">NO APTO</div>
-    </div>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;min-height:16px;font-size:7.5pt;"><b>Observaciones: </b><span id="p-obsapt"></span></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">M. RECOMENDACIONES Y/O TRATAMIENTO</div>
-    <div style="padding:4px 6px;min-height:40px;font-size:7.5pt;white-space:pre-line;" id="p-recom"></div>
-  </div>
-
-  <div class="f-section">
-    <div class="f-sec-title">N. RETIRO (EVALUACIÓN)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #c8dac8;">
-      <div style="padding:3px 6px;font-size:7.5pt;"><b>Se realiza la evaluación: </b><span id="p-evalr"></span></div>
-      <div style="padding:3px 6px;border-left:1px solid #c8dac8;font-size:7.5pt;"><b>Condición relacionada con el trabajo: </b><span id="p-condr"></span></div>
-    </div>
-    <div style="border-top:1px solid #c8dac8;padding:2px 5px;min-height:14px;font-size:7.5pt;"><b>Observación: </b><span id="p-obsn"></span></div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:0;margin-top:4px;">
-    <div class="f-section" style="margin-bottom:0;margin-right:4px;">
-      <div class="f-sec-title">O. DATOS DEL PROFESIONAL</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #c8dac8;">
-        <div class="f-cell f-cell-label">NOMBRE Y APELLIDO</div><div class="f-cell f-cell-label">CÓDIGO MÉDICO</div><div class="f-cell f-cell-label">FIRMA Y SELLO</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
-        <div class="f-cell f-cell-value" style="min-height:30px;" id="p-pnombre"></div>
-        <div class="f-cell f-cell-value" id="p-pcodigo"></div>
-        <div class="f-cell f-cell-value"></div>
-      </div>
-    </div>
-    <div class="f-section" style="margin-bottom:0;">
-      <div class="f-sec-title">P. FIRMA DEL TRABAJADOR</div>
-      <div style="min-height:48px;border-top:1px solid #c8dac8;"></div>
-    </div>
-  </div>
-</div>
-
-</div><!-- end print-area -->
-
-<!-- ══ JAVASCRIPT ══ -->
+</div><!-- end wrap -->
 <script>
-const GROQ_KEY = ""; // pega aquí tu key de console.groq.com
+var GROQ_KEY = "";
+var S = {sexo:"",gs:"",lat:"",tipoEval:"",transf:"",tratH:"",tabExC:"",tabNoC:"",alcExC:"",alcNoC:"",aptitud:"",evalR:"",condR:"",prio:[],emps:[],empSel:null,risks:{},halls:{}};
 
-const CIE10_DB = [
+var CIE = [
   {c:"M54.5",d:"Lumbago no especificado"},{c:"M54.4",d:"Lumbociática"},{c:"M54.2",d:"Cervicalgia"},
   {c:"M75.1",d:"Síndrome del manguito rotador"},{c:"M65.3",d:"Dedo en gatillo"},{c:"M77.1",d:"Epicondilitis lateral"},
   {c:"M77.0",d:"Epicondilitis medial"},{c:"M79.1",d:"Mialgia"},{c:"M51.1",d:"Degeneración disco lumbar"},
   {c:"M75.0",d:"Capsulitis adhesiva hombro"},{c:"G56.0",d:"Síndrome túnel carpiano"},
-  {c:"G54.2",d:"Lesión raíces cervicales"},{c:"G57.0",d:"Lesión nervio ciático"},{c:"G43.9",d:"Migraña"},
+  {c:"G54.2",d:"Lesión raíces cervicales"},{c:"G57.0",d:"Lesión nervio ciático"},
   {c:"J45.9",d:"Asma no especificada"},{c:"J30.1",d:"Rinitis alérgica"},{c:"J41.0",d:"Bronquitis crónica"},
-  {c:"J06.9",d:"Infección vías resp. superiores"},{c:"J20.9",d:"Bronquitis aguda"},
   {c:"I10",d:"Hipertensión esencial"},{c:"I25.1",d:"Cardiopatía aterosclerótica"},
-  {c:"F32.0",d:"Episodio depresivo leve"},{c:"F32.1",d:"Episodio depresivo moderado"},
-  {c:"F41.1",d:"Trastorno ansiedad generalizada"},{c:"F43.2",d:"Trastorno de adaptación"},{c:"F48.0",d:"Burnout"},
+  {c:"F32.0",d:"Episodio depresivo leve"},{c:"F41.1",d:"Trastorno de ansiedad"},{c:"F48.0",d:"Burnout"},
   {c:"L23.0",d:"Dermatitis alérgica de contacto"},{c:"L24.0",d:"Dermatitis irritante"},
-  {c:"H83.3",d:"Efectos ruido en oído"},{c:"H90.3",d:"Hipoacusia neurosensorial bilateral"},
+  {c:"H83.3",d:"Efectos ruido en oído"},{c:"H90.3",d:"Hipoacusia neurosensorial"},
   {c:"E11.9",d:"Diabetes mellitus tipo 2"},{c:"E78.0",d:"Hipercolesterolemia"},{c:"E66.0",d:"Obesidad"},
-  {c:"E03.9",d:"Hipotiroidismo"},{c:"K29.5",d:"Gastritis crónica"},{c:"K21.0",d:"ERGE con esofagitis"},
+  {c:"E03.9",d:"Hipotiroidismo"},{c:"K29.5",d:"Gastritis crónica"},{c:"K21.0",d:"ERGE"},
   {c:"S60.0",d:"Contusión de dedo"},{c:"S93.4",d:"Esguince de tobillo"},{c:"S83.6",d:"Esguince de rodilla"},
   {c:"S40.0",d:"Contusión de hombro"},{c:"S61.0",d:"Herida de dedo"},
-  {c:"T65.9",d:"Efecto tóxico de sustancia"},{c:"T56.0",d:"Efecto tóxico del plomo"},
   {c:"Z57.0",d:"Exposición laboral al ruido"},{c:"Z57.2",d:"Exposición laboral al polvo"},
   {c:"Z57.5",d:"Exposición laboral a tóxicos"},{c:"Z57.6",d:"Exposición a temperaturas extremas"},
-  {c:"Z57.7",d:"Exposición laboral a vibraciones"},{c:"Z56.6",d:"Dificultades físicas/mentales en trabajo"},
+  {c:"Z57.7",d:"Exposición laboral a vibraciones"},{c:"Z56.6",d:"Dificultades en el trabajo"}
 ];
 
-const RECOM_DATA = [
-  {cat:"🦺 EPP",items:["Uso obligatorio de casco de seguridad durante toda la jornada","Guantes de protección adecuados al riesgo del puesto","Protectores auditivos en áreas con ruido superior a 85 dB","Mascarilla respiratoria N95 en áreas con polvo o químicos","Calzado de seguridad con punta de acero en toda el área","Gafas de seguridad en actividades con proyección de partículas","Arnés de seguridad en trabajos en altura mayor a 1.80 m","Chaleco reflectivo en áreas de circulación vehicular"]},
-  {cat:"💧 Hidratación",items:["Consumir mínimo 2 litros de agua durante la jornada laboral","Hidratarse cada 20-30 minutos en ambientes calurosos","Evitar bebidas azucaradas o alcohólicas durante la jornada","Reponer electrolitos en actividades físicas intensas o calor extremo"]},
-  {cat:"🪑 Ergonomía",items:["Pausas activas de 5-10 minutos cada 2 horas de trabajo continuo","Mantener postura correcta: espalda recta, monitor a nivel de ojos","No levantar cargas mayores a 25 kg sin ayuda mecánica","Técnica correcta de levantamiento: flexionar rodillas, espalda recta","Rotar actividades para evitar movimientos repetitivos prolongados"]},
-  {cat:"📋 Seguimiento",items:["Control médico ocupacional en 3 meses","Control médico en 6 meses para exámenes periódicos","Audiometría de control en 6 meses por exposición a ruido","Espirometría de control anual por exposición a polvo o químicos","BHC, glucosa, perfil lipídico en 3 meses"]},
-  {cat:"🚫 Restricciones",items:["Restringir levantamiento de cargas mayores a 10 kg por patología lumbar","Evitar exposición a temperaturas extremas por condición cardiovascular","No trabajar en alturas hasta nueva evaluación médica","Evitar exposición a solventes y químicos por sensibilización cutánea","Restringir trabajo con vibraciones por patología de miembro superior"]},
-  {cat:"🧼 Higiene",items:["Lavado de manos con agua y jabón antes de comer y al finalizar jornada","Ducharse al finalizar jornada en caso de exposición a químicos o polvo","No comer ni beber en áreas con exposición a sustancias químicas"]},
-  {cat:"🧠 Salud Mental",items:["Pausas de descanso activo durante la jornada para manejo del estrés","Consulta con psicología ocupacional para evaluación de estrés laboral","Promover comunicación asertiva con jefaturas para reducir riesgo psicosocial"]},
+var RECOM = [
+  {g:"Uso obligatorio de casco de seguridad durante toda la jornada",c:"EPP"},
+  {g:"Guantes de protección adecuados al riesgo del puesto",c:"EPP"},
+  {g:"Protectores auditivos en areas con ruido superior a 85 dB",c:"EPP"},
+  {g:"Mascarilla respiratoria N95 en areas con polvo o quimicos",c:"EPP"},
+  {g:"Calzado de seguridad con punta de acero en toda el area",c:"EPP"},
+  {g:"Gafas de seguridad en actividades con proyeccion de particulas",c:"EPP"},
+  {g:"Arnes de seguridad en trabajos en altura mayor a 1.80 m",c:"EPP"},
+  {g:"Chaleco reflectivo en areas de circulacion vehicular",c:"EPP"},
+  {g:"Consumir minimo 2 litros de agua durante la jornada laboral",c:"Hidratacion"},
+  {g:"Hidratarse cada 20-30 minutos en ambientes calurosos",c:"Hidratacion"},
+  {g:"Evitar bebidas azucaradas o alcoholicas durante la jornada",c:"Hidratacion"},
+  {g:"Reponer electrolitos en actividades fisicas intensas o calor extremo",c:"Hidratacion"},
+  {g:"Pausas activas de 5-10 minutos cada 2 horas de trabajo continuo",c:"Ergonomia"},
+  {g:"Mantener postura correcta: espalda recta monitor a nivel de ojos",c:"Ergonomia"},
+  {g:"No levantar cargas mayores a 25 kg sin ayuda mecanica",c:"Ergonomia"},
+  {g:"Tecnica correcta de levantamiento: flexionar rodillas espalda recta",c:"Ergonomia"},
+  {g:"Rotar actividades para evitar movimientos repetitivos prolongados",c:"Ergonomia"},
+  {g:"Control medico ocupacional en 3 meses para evaluacion de evolucion",c:"Seguimiento"},
+  {g:"Control medico en 6 meses para examenes periodicos",c:"Seguimiento"},
+  {g:"Audiometria de control en 6 meses por exposicion a ruido",c:"Seguimiento"},
+  {g:"Espirometria de control anual por exposicion a polvo o quimicos",c:"Seguimiento"},
+  {g:"Examenes de laboratorio: BHC glucosa perfil lipidico en 3 meses",c:"Seguimiento"},
+  {g:"Restringir levantamiento de cargas mayores a 10 kg por patologia lumbar",c:"Restricciones"},
+  {g:"Evitar exposicion a temperaturas extremas por condicion cardiovascular",c:"Restricciones"},
+  {g:"No trabajar en alturas hasta nueva evaluacion medica",c:"Restricciones"},
+  {g:"Evitar turnos nocturnos por condicion de salud actual",c:"Restricciones"},
+  {g:"Lavado de manos con agua y jabon antes de comer y al finalizar jornada",c:"Higiene"},
+  {g:"No comer ni beber en areas con exposicion a sustancias quimicas",c:"Higiene"},
+  {g:"Ducharse al finalizar jornada en caso de exposicion a quimicos o polvo",c:"Higiene"},
+  {g:"Pausas de descanso activo durante la jornada para manejo del estres",c:"Salud Mental"},
+  {g:"Consulta con psicologia ocupacional para evaluacion de estres laboral",c:"Salud Mental"},
+  {g:"Promover comunicacion asertiva con jefaturas para reducir riesgo psicosocial",c:"Salud Mental"}
 ];
 
-const FACTORES_DATA = {
-  "FÍSICO":["Temperaturas altas","Temperaturas bajas","Radiación Ionizante","Radiación No Ionizante","Ruido","Vibración","Iluminación","Ventilación","Fluido eléctrico"],
-  "LOCATIVOS":["Falta señalización/aseo/desorden","Atrapamiento entre Máquinas/superficies","Atrapamiento entre objetos","Caída de objetos","Caídas al mismo nivel","Caídas a diferente nivel"],
-  "MECÁNICOS":["Pinchazos","Cortes","Choques/colisión vehicular","Atropellamientos por vehículos","Proyección de fluidos","Proyección de partículas/fragmentos","Contacto con superficies de trabajo"],
-  "ELÉCTRICOS":["Contacto eléctrico"],
-  "QUÍMICO":["Polvos","Sólidos","Humos","Líquidos","Vapores","Aerosoles","Neblinas","Gaseosos"],
-  "BIOLÓGICO":["Virus","Hongos","Bacterias","Parásitos","Exposición a vectores","Animales selváticos"],
-  "ERGONÓMICO":["Manejo manual de cargas","Movimiento repetitivos","Posturas forzadas","Trabajos con PVD","Diseño inadecuado del puesto"],
-  "PSICOSOCIAL":["Monotonía del trabajo","Sobrecarga laboral","Minuciosidad de la tarea","Alta responsabilidad","Autonomía limitada en decisiones","Supervisión deficiente","Conflicto de rol","Falta de claridad en funciones","Incorrecta distribución del trabajo","Turnos rotativos","Relaciones interpersonales conflictivas","Inestabilidad laboral","Amenaza Delincuencial"],
+var FACTS = {
+  "FISICO":["Temp. altas","Temp. bajas","Rad. Ionizante","Rad. No Ionizante","Ruido","Vibracion","Iluminacion","Ventilacion","Fluido electrico"],
+  "LOCATIVOS":["Falta señalizacion","Atrapamiento maquinas","Caida objetos","Caidas mismo nivel","Caidas distinto nivel"],
+  "MECANICOS":["Pinchazos","Cortes","Choques vehiculares","Atropellamientos","Proyeccion fluidos","Proyeccion particulas","Contacto superficies"],
+  "ELECTRICOS":["Contacto electrico"],
+  "QUIMICO":["Polvos","Humos","Liquidos","Vapores","Aerosoles","Gaseosos","Neblinas"],
+  "BIOLOGICO":["Virus","Bacterias","Hongos","Parasitos","Vectores","Animales selvaticos"],
+  "ERGONOMICO":["Manejo manual cargas","Movim. repetitivos","Posturas forzadas","Trabajo PVD","Diseño inadecuado puesto"],
+  "PSICOSOCIAL":["Sobrecarga laboral","Monotonia","Alta responsabilidad","Turnos rotativos","Conflicto de rol","Inestabilidad laboral","Amenaza delincuencial"]
 };
 
-const REGIONES_DATA = ["1. Piel","2. Ojos","3. Oído","4. Oro faringe","5. Nariz","6. Cuello","7. Tórax","8. Abdomen","9. Columna","10. Pelvis","11. Extremidades","12. Neurológico"];
+var REGS = ["1.Piel","2.Ojos","3.Oido","4.Orofaringe","5.Nariz","6.Cuello","7.Torax","8.Abdomen","9.Columna","10.Pelvis","11.Extremidades","12.Neurologico"];
 
-const S = {sexo:"",gs:"",lat:"",tipoEval:"",transf:"",tratH:"",tabExC:"",tabNoC:"",alcExC:"",alcNoC:"",aptitud:"",evalR:"",condR:"",prio:[],empresas:[],empSel:null,riesgos:{},hallazgos:{}};
-
-window.onload = function(){
-  document.getElementById('fAten').value = new Date().toISOString().slice(0,10);
-  const med = JSON.parse(localStorage.getItem('med_v3')||'{}');
-  if(med.nombre){document.getElementById('med-nombre').value=med.nombre;document.getElementById('pnombre').value=med.nombre;}
-  if(med.codigo){document.getElementById('med-codigo').value=med.codigo;document.getElementById('pcodigo').value=med.codigo;}
-  if(med.esp) document.getElementById('med-esp').value=med.esp;
-  S.empresas = JSON.parse(localStorage.getItem('emp_db')||'[]');
-  renderEmpresas();
-  renderRegiones();
-  renderFactores();
-  renderLaboral();
-  renderExtraLab();
-  renderExamenes();
-  renderDx();
-  renderRecom();
+window.onload = function() {
+  try {
+    document.getElementById('fAten').value = new Date().toISOString().slice(0,10);
+    var med = JSON.parse(localStorage.getItem('med')||'{}');
+    if(med.nom) { document.getElementById('m-nom').value=med.nom; document.getElementById('pnom').value=med.nom; }
+    if(med.cod) { document.getElementById('m-cod').value=med.cod; document.getElementById('pcod').value=med.cod; }
+    if(med.esp) { document.getElementById('m-esp').value=med.esp; document.getElementById('pesp').value=med.esp; }
+    S.emps = JSON.parse(localStorage.getItem('emps')||'[]');
+    renderEmps();
+    buildRegiones();
+    buildFactores();
+    buildLaboral();
+    buildExamenes();
+    buildDx();
+    buildRecom();
+  } catch(e) { console.error('onload error',e); }
 };
 
-// ── Tabs ──
-function showTab(n){
-  for(let i=0;i<7;i++){
-    document.getElementById('st'+i).style.display=i===n?'block':'none';
-    const btns=document.querySelectorAll('.tab-btn');
-    btns[i].className='tab-btn'+(i===n?' active':'');
+function goTab(n) {
+  for(var i=0;i<7;i++) {
+    document.getElementById('t'+i).style.display = i===n ? 'block' : 'none';
+    var btn = document.getElementById('tb'+i);
+    if(btn) { btn.className = i===n ? 'tb on' : 'tb'; }
   }
 }
 
-// ── Chips ──
-function sc(key,val,el,gid){
-  S[key]=S[key]===val?'':val;
-  if(gid) document.querySelectorAll('#'+gid+' .chip').forEach(b=>b.classList.remove('active'));
-  if(S[key]) el.classList.add('active'); else el.classList.remove('active');
-  if(key==='tratH') document.getElementById('tratHd').style.display=S.tratH==='Sí'?'block':'none';
+function openMed() { document.getElementById('mod-med').style.display='flex'; }
+function closeMed() { document.getElementById('mod-med').style.display='none'; }
+function saveMed() {
+  var med = {nom:gv('m-nom'),cod:gv('m-cod'),esp:gv('m-esp')};
+  localStorage.setItem('med',JSON.stringify(med));
+  sv('pnom',med.nom); sv('pcod',med.cod); sv('pesp',med.esp);
+  closeMed();
 }
-function mc(key,val,el){
+
+function tog1(key,val,on,off) { S[key]=val; document.getElementById(on).className='chip on'; document.getElementById(off).className='chip'; }
+function togSN(key,val,on,off) { S[key]=val; document.getElementById(on).className='chip on'; document.getElementById(off).className='chip'; }
+function togGS(val,el) {
+  document.querySelectorAll('.chip.red').forEach(function(b){b.className='chip red';});
+  S.gs=val; el.className='chip red on';
+}
+function togLat(val,on,o1,o2) {
+  S.lat=val;
+  [on,o1,o2].forEach(function(id){document.getElementById(id).className='chip';});
+  document.getElementById(on).className='chip on';
+}
+function togTE(val,on,o1,o2,o3) {
+  S.tipoEval=val;
+  [on,o1,o2,o3].forEach(function(id){document.getElementById(id).className='chip lg';});
+  document.getElementById(on).className='chip lg on';
+}
+function togM(key,val,el) {
   if(!S[key]) S[key]=[];
-  if(S[key].includes(val)){S[key]=S[key].filter(x=>x!==val);el.classList.remove('active');}
-  else{S[key].push(val);el.classList.add('active');}
+  var idx=S[key].indexOf(val);
+  if(idx>-1){S[key].splice(idx,1);el.className=el.className.replace(' on','');}
+  else{S[key].push(val);el.className+=' on';}
+}
+function showTratH(){document.getElementById('tratHd').style.display='block';}
+function hideTratH(){document.getElementById('tratHd').style.display='none';}
+
+function calcIMC(){
+  var p=parseFloat(gv('peso')), t=parseFloat(gv('talla'))/100;
+  if(p&&t) document.getElementById('imc').value=(p/(t*t)).toFixed(1);
 }
 
-// ── IMC ──
-function calcIMC(){const p=parseFloat(document.getElementById('peso').value),t=parseFloat(document.getElementById('talla').value)/100;if(p&&t)document.getElementById('imc').value=(p/(t*t)).toFixed(1);}
-
-// ── Aptitud ──
-function setApt(val,el){
+function setApt(val,btnId) {
   S.aptitud=val;
-  const c={APTO:"#16a34a","APTO EN OBSERVACIÓN":"#d97706","APTO CON LIMITACIONES":"#2563eb","NO APTO":"#dc2626"};
-  const b={APTO:"#f0fdf4","APTO EN OBSERVACIÓN":"#fffbeb","APTO CON LIMITACIONES":"#eff6ff","NO APTO":"#fef2f2"};
-  document.querySelectorAll('.apt-btn').forEach(x=>{x.style.background='#fff';x.style.color=x.style.borderColor;});
-  el.style.background=c[val];el.style.color='#fff';
-  const r=document.getElementById('apt-result');r.style.display='block';r.style.background=b[val];r.style.border='2px solid '+c[val];r.style.color=c[val];r.textContent=val;
+  var cols={APTO:"#16a34a","APTO EN OBSERVACION":"#d97706","APTO CON LIMITACIONES":"#2563eb","NO APTO":"#dc2626"};
+  var bgs={APTO:"#f0fdf4","APTO EN OBSERVACION":"#fffbeb","APTO CON LIMITACIONES":"#eff6ff","NO APTO":"#fef2f2"};
+  document.querySelectorAll('.apt-btn').forEach(function(b){b.style.background='#fff';b.style.color=b.style.borderColor;});
+  var btn=document.getElementById(btnId);btn.style.background=cols[val];btn.style.color='#fff';
+  var r=document.getElementById('apt-res');r.style.display='block';r.style.background=bgs[val];r.style.border='2px solid '+cols[val];r.style.color=cols[val];r.textContent=val;
 }
 
-// ── Médico ──
-function toggleMedico(){const m=document.getElementById('modal-medico');m.style.display=m.style.display==='flex'?'none':'flex';}
-function saveMedico(){
-  const med={nombre:document.getElementById('med-nombre').value,codigo:document.getElementById('med-codigo').value,esp:document.getElementById('med-esp').value};
-  localStorage.setItem('med_v3',JSON.stringify(med));
-  document.getElementById('pnombre').value=med.nombre;
-  document.getElementById('pcodigo').value=med.codigo;
-  toggleMedico();
+function togEmpForm(){var f=document.getElementById('emp-form');f.style.display=f.style.display==='none'?'block':'none';}
+function saveEmp(){
+  var e={id:Date.now(),nom:gv('ef-nom'),ruc:gv('ef-ruc'),ciiu:gv('ef-ciiu'),rep:gv('ef-rep'),dir:gv('ef-dir')};
+  if(!e.nom)return;
+  S.emps.push(e); localStorage.setItem('emps',JSON.stringify(S.emps));
+  selEmp(e); togEmpForm(); renderEmps();
 }
-
-// ── Empresas ──
-function toggleEmpForm(){const f=document.getElementById('emp-form');f.style.display=f.style.display==='none'?'block':'none';}
-function saveEmpresa(){
-  const e={id:Date.now(),nombre:document.getElementById('ef-nombre').value,ruc:document.getElementById('ef-ruc').value,ciiu:document.getElementById('ef-ciiu').value,rep:document.getElementById('ef-rep').value,dir:document.getElementById('ef-dir').value};
-  if(!e.nombre)return;
-  S.empresas.push(e);localStorage.setItem('emp_db',JSON.stringify(S.empresas));
-  selectEmp(e);toggleEmpForm();renderEmpresas();
-}
-function selectEmp(e){
-  S.empSel=e;renderEmpresas();
-  const i=document.getElementById('emp-info');i.style.display='block';
+function selEmp(e){
+  S.empSel=e; renderEmps();
+  var i=document.getElementById('emp-info'); i.style.display='block';
   i.innerHTML=(e.ruc?'<b>RUC:</b> '+e.ruc+' ':'')+( e.ciiu?'<b>CIIU:</b> '+e.ciiu+' ':'')+( e.rep?'<b>Rep:</b> '+e.rep:'');
 }
-function renderEmpresas(){
-  const c=document.getElementById('emp-chips');c.innerHTML='';
-  S.empresas.forEach(e=>{
-    const b=document.createElement('button');b.className='chip'+(S.empSel?.id===e.id?' active':'');b.textContent=e.nombre;b.onclick=()=>selectEmp(e);c.appendChild(b);
-    const x=document.createElement('button');x.style.cssText='background:none;border:none;color:#ef4444;cursor:pointer;font-size:15px;';x.textContent='×';x.onclick=()=>{S.empresas=S.empresas.filter(y=>y.id!==e.id);localStorage.setItem('emp_db',JSON.stringify(S.empresas));renderEmpresas();};c.appendChild(x);
+function renderEmps(){
+  var c=document.getElementById('emp-chips'); c.innerHTML='';
+  S.emps.forEach(function(e){
+    var b=document.createElement('button');
+    b.className='chip'+(S.empSel&&S.empSel.id===e.id?' on':'');
+    b.textContent=e.nom;
+    b.onclick=function(){selEmp(e);};
+    c.appendChild(b);
+    var x=document.createElement('button');
+    x.style.cssText='background:none;border:none;color:#ef4444;cursor:pointer;font-size:15px;padding:0 2px;';
+    x.textContent='x';
+    x.onclick=function(){S.emps=S.emps.filter(function(y){return y.id!==e.id;});localStorage.setItem('emps',JSON.stringify(S.emps));renderEmps();};
+    c.appendChild(x);
   });
 }
 
-// ── Regiones ──
-function renderRegiones(){
-  const c=document.getElementById('regiones-grid');
-  REGIONES_DATA.forEach(r=>{
-    const d=document.createElement('div');
-    d.style.cssText='border:1.5px solid #ddd;border-radius:7px;padding:8px;background:#fff;';d.id='reg-'+r;
-    d.innerHTML='<div style="font-weight:700;font-size:11px;color:#1e3a5f;margin-bottom:5px;">'+r+'</div><div style="display:flex;gap:5px;"><button class="chip" onclick="setReg(\''+r+'\',\'Normal\',this)">Normal</button><button class="chip" onclick="setReg(\''+r+'\',\'Patológico\',this)">Patológico</button></div><div id="rd-'+r+'" style="display:none;margin-top:5px;"><input type="text" placeholder="Describir hallazgo..." style="border-color:#fca5a5;font-size:11px;"/></div>';
+function buildRegiones(){
+  var c=document.getElementById('reg-grid');
+  REGS.forEach(function(r){
+    var d=document.createElement('div');
+    d.id='rg-'+r;
+    d.style.cssText='border:1.5px solid #ddd;border-radius:7px;padding:8px;background:#fff;';
+    d.innerHTML='<div style="font-weight:700;font-size:11px;color:#1e3a5f;margin-bottom:5px;">'+r+'</div>'
+      +'<div style="display:flex;gap:5px;">'
+      +'<button class="chip" onclick="setReg(\''+r+'\',\'Normal\',this)">Normal</button>'
+      +'<button class="chip" onclick="setReg(\''+r+'\',\'Patologico\',this)">Patológico</button>'
+      +'</div>'
+      +'<div id="rd-'+r+'" style="display:none;margin-top:5px;"><input type="text" placeholder="Describir..." style="font-size:11px;border-color:#fca5a5;"/></div>';
     c.appendChild(d);
   });
 }
 function setReg(r,val,el){
-  S.hallazgos[r]=val;
-  const d=document.getElementById('reg-'+r);
-  d.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  if(val==='Patológico'){el.style.background='#dc2626';el.style.borderColor='#dc2626';el.style.color='#fff';d.style.borderColor='#fca5a5';d.style.background='#fff5f5';}
+  S.halls[r]=val;
+  var d=document.getElementById('rg-'+r);
+  d.querySelectorAll('.chip').forEach(function(b){b.className='chip';});
+  el.className='chip on';
+  if(val==='Patologico'){el.style.background='#dc2626';el.style.borderColor='#dc2626';d.style.borderColor='#fca5a5';d.style.background='#fff5f5';}
   else{d.style.borderColor='#bbf7d0';d.style.background='#f0fdf4';}
-  document.getElementById('rd-'+r).style.display=val==='Patológico'?'block':'none';
+  document.getElementById('rd-'+r).style.display=val==='Patologico'?'block':'none';
 }
 
-// ── Factores ──
-function renderFactores(){
-  const c=document.getElementById('factores-grid');
-  Object.entries(FACTORES_DATA).forEach(([cat,items])=>{
-    const d=document.createElement('div');d.style.marginBottom='12px';
-    d.innerHTML='<div style="font-weight:700;font-size:10px;color:#fff;background:#374151;display:inline-block;padding:2px 10px;border-radius:20px;margin-bottom:6px;">'+cat+'</div><div style="display:flex;flex-wrap:wrap;gap:5px;">'+items.map(item=>'<button class="risk-tag" id="rk-'+cat+'_'+item+'" onclick="togRisk(\''+cat+'_'+item+'\',this)">'+item+'</button>').join('')+'</div>';
+function buildFactores(){
+  var c=document.getElementById('fact-grid');
+  Object.keys(FACTS).forEach(function(cat){
+    var d=document.createElement('div'); d.style.marginBottom='12px';
+    var btns=FACTS[cat].map(function(item){
+      return '<button class="risk" id="rk-'+cat+item+'" onclick="togRisk(\''+cat+item+'\',this)">'+item+'</button>';
+    }).join('');
+    d.innerHTML='<div style="font-weight:700;font-size:10px;color:#fff;background:#374151;display:inline-block;padding:2px 10px;border-radius:20px;margin-bottom:6px;">'+cat+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px;">'+btns+'</div>';
     c.appendChild(d);
   });
 }
-function togRisk(k,el){S.riesgos[k]=!S.riesgos[k];el.classList.toggle('on',S.riesgos[k]);el.textContent=(S.riesgos[k]?'✓ ':'')+k.split('_')[1];}
+function togRisk(k,el){S.risks[k]=!S.risks[k];el.className=S.risks[k]?'risk on':'risk';}
 
-// ── Laboral ──
-function renderLaboral(){
-  const b=document.getElementById('lab-body');
-  for(let i=0;i<8;i++){
-    const tr=document.createElement('tr');tr.style.background=i%2?'#f9fafb':'#fff';
-    tr.innerHTML='<td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;padding:2px 4px;"/></td><td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;padding:2px 4px;"/></td>'+['','','','','','',''].map(()=>'<td style="border:1px solid #eee;text-align:center;"><input type="checkbox" style="width:14px;height:14px;cursor:pointer;"/></td>').join('')+'<td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;padding:2px 4px;"/></td><td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;padding:2px 4px;"/></td>';
+function buildLaboral(){
+  var b=document.getElementById('lab-body');
+  for(var i=0;i<8;i++){
+    var tr=document.createElement('tr');tr.style.background=i%2?'#f9fafb':'#fff';
+    tr.innerHTML='<td><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;"/></td>'
+      +'<td><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td><input type="text" style="border:none;background:transparent;width:80px;font-size:11px;"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox"/></td>'
+      +'<td><input type="text" style="border:none;background:transparent;width:100%;font-size:11px;"/></td>';
     b.appendChild(tr);
   }
 }
 
-// ── Extra Laboral ──
-function renderExtraLab(){
-  const b=document.getElementById('extra-body');
-  for(let i=0;i<3;i++){
-    const d=document.createElement('div');d.style.cssText='display:grid;grid-template-columns:2fr 2fr 1fr;gap:8px;margin-bottom:8px;';
-    d.innerHTML='<div class="fld"><label>Tipo de Actividad</label><input type="text"/></div><div class="fld"><label>Descripción</label><input type="text"/></div><div class="fld"><label>Fecha</label><input type="date"/></div>';
-    b.appendChild(d);
-  }
-}
-
-// ── Exámenes ──
-function renderExamenes(){
-  const b=document.getElementById('exam-body');
-  for(let i=0;i<5;i++){
-    const tr=document.createElement('tr');
-    tr.innerHTML='<td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:12px;padding:3px 4px;"/></td><td style="border:1px solid #eee;"><input type="date" style="border:none;background:transparent;width:100%;font-size:12px;padding:3px 4px;"/></td><td style="border:1px solid #eee;"><input type="text" style="border:none;background:transparent;width:100%;font-size:12px;padding:3px 4px;"/></td>';
+function buildExamenes(){
+  var b=document.getElementById('exam-body');
+  for(var i=0;i<5;i++){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><input type="text" style="border:none;background:transparent;width:100%;font-size:12px;"/></td>'
+      +'<td><input type="date" style="border:none;background:transparent;width:100%;font-size:12px;"/></td>'
+      +'<td><input type="text" style="border:none;background:transparent;width:100%;font-size:12px;"/></td>';
     b.appendChild(tr);
   }
 }
 
-// ── CIE-10 ──
-function renderDx(){
-  const b=document.getElementById('dx-body');
-  for(let i=0;i<6;i++){
-    const tr=document.createElement('tr');
-    tr.innerHTML='<td style="border:1px solid #eee;text-align:center;font-weight:700;color:#aaa;">'+(i+1)+'</td><td style="border:1px solid #eee;position:relative;"><div class="cie-wrap"><input type="text" id="ci'+i+'" placeholder="Escriba código o nombre CIE-10..." style="width:100%;border:none;background:transparent;font-size:12px;padding:4px 6px;" oninput="srchCIE('+i+',this.value)" autocomplete="off"/><div class="cie-drop" id="cd'+i+'"></div></div></td><td style="border:1px solid #eee;text-align:center;"><input type="checkbox" style="width:16px;height:16px;cursor:pointer;"/></td><td style="border:1px solid #eee;text-align:center;"><input type="checkbox" style="width:16px;height:16px;cursor:pointer;"/></td>';
+function buildDx(){
+  var b=document.getElementById('dx-body');
+  for(var i=0;i<6;i++){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td style="text-align:center;font-weight:700;color:#aaa;">'+(i+1)+'</td>'
+      +'<td><div class="cie-wrap">'
+      +'<input type="text" id="ci'+i+'" placeholder="Escriba codigo o nombre..." style="border:none;background:transparent;width:100%;font-size:12px;padding:4px 5px;" oninput="srch('+i+',this.value)" autocomplete="off"/>'
+      +'<div class="cie-drop" id="cd'+i+'"></div>'
+      +'</div></td>'
+      +'<td style="text-align:center;"><input type="checkbox" style="width:15px;height:15px;cursor:pointer;"/></td>'
+      +'<td style="text-align:center;"><input type="checkbox" style="width:15px;height:15px;cursor:pointer;"/></td>';
     b.appendChild(tr);
   }
 }
-function srchCIE(i,q){
-  const dd=document.getElementById('cd'+i);
-  if(q.length<2){dd.style.display='none';return;}
-  const l=q.toLowerCase();
-  const res=CIE10_DB.filter(x=>x.c.toLowerCase().includes(l)||x.d.toLowerCase().includes(l)).slice(0,8);
+
+function srch(i,q){
+  var dd=document.getElementById('cd'+i);
+  if(!q||q.length<2){dd.style.display='none';return;}
+  var l=q.toLowerCase();
+  var res=CIE.filter(function(x){return x.c.toLowerCase().indexOf(l)>-1||x.d.toLowerCase().indexOf(l)>-1;}).slice(0,8);
   if(!res.length){dd.style.display='none';return;}
-  dd.innerHTML=res.map(r=>'<div class="cie-item" onmousedown="pickCIE(event,'+i+',\''+r.c+'\',\''+r.d.replace(/'/g,"\\'")+'\')"><span class="cie-code">'+r.c+'</span><span>'+r.d+'</span></div>').join('');
+  dd.innerHTML=res.map(function(r){
+    return '<div class="cie-item" onmousedown="pick(event,'+i+',\''+r.c+'\',\''+r.d+'\')">'
+      +'<span style="font-weight:700;color:#2a7a4b;min-width:60px;">'+r.c+'</span>'
+      +'<span>'+r.d+'</span></div>';
+  }).join('');
   dd.style.display='block';
 }
-function pickCIE(ev,i,c,d){ev.preventDefault();document.getElementById('ci'+i).value=c+' — '+d;document.getElementById('cd'+i).style.display='none';}
-document.addEventListener('click',function(e){document.querySelectorAll('.cie-drop').forEach(d=>{if(!d.parentElement.contains(e.target))d.style.display='none';});});
+function pick(ev,i,c,d){ev.preventDefault();document.getElementById('ci'+i).value=c+' - '+d;document.getElementById('cd'+i).style.display='none';}
+document.addEventListener('click',function(e){document.querySelectorAll('.cie-drop').forEach(function(d){if(!d.parentElement.contains(e.target))d.style.display='none';});});
 
-// ── Recomendaciones ──
-function renderRecom(){
-  const c=document.getElementById('recom-grid');
-  RECOM_DATA.forEach(cat=>{
-    const d=document.createElement('div');d.style.marginBottom='10px';
-    const btns=cat.items.map(item=>'<button class="recom-tag" onclick="insRecom(\''+item.replace(/'/g,"\\'")+'\')">+ '+(item.length>55?item.slice(0,55)+'...':item)+'</button>').join('');
-    d.innerHTML='<div style="font-weight:700;font-size:11px;color:#374151;margin-bottom:5px;">'+cat.cat+'</div><div style="display:flex;flex-wrap:wrap;gap:5px;">'+btns+'</div>';
+function buildRecom(){
+  var c=document.getElementById('recom-btns');
+  var cats={};
+  RECOM.forEach(function(r){if(!cats[r.c])cats[r.c]=[];cats[r.c].push(r.g);});
+  var icons={EPP:"🦺",Hidratacion:"💧",Ergonomia:"🪑",Seguimiento:"📋",Restricciones:"🚫",Higiene:"🧼","Salud Mental":"🧠"};
+  Object.keys(cats).forEach(function(cat){
+    var d=document.createElement('div'); d.style.marginBottom='10px';
+    var label=(icons[cat]||'')+' '+cat;
+    var btns=cats[cat].map(function(item){
+      var short=item.length>55?item.slice(0,55)+'...':item;
+      var safe=item.replace(/'/g,"&#39;");
+      return '<button class="qtag" onclick="insR(\''+safe+'\')">+ '+short+'</button>';
+    }).join('');
+    d.innerHTML='<div style="font-weight:700;font-size:11px;color:#374151;margin-bottom:5px;">'+label+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px;">'+btns+'</div>';
     c.appendChild(d);
   });
 }
-function insRecom(t){const ta=document.getElementById('recom');ta.value=(ta.value?ta.value+'\n• '+t:'• '+t);}
+function insR(t){var ta=document.getElementById('recom');ta.value=(ta.value?ta.value+'\n- '+t:'- '+t);}
 
-// ── IA Groq ──
 async function genIA(){
-  if(!GROQ_KEY){const e=document.getElementById('ia-err');e.textContent='Agrega tu Groq API Key en el código.';e.style.display='block';return;}
-  const dxs=[];for(let i=0;i<6;i++){const v=document.getElementById('ci'+i).value;if(v)dxs.push(v);}
-  if(!dxs.length){const e=document.getElementById('ia-err');e.textContent='Ingrese al menos un diagnóstico en sección K.';e.style.display='block';return;}
-  const btn=document.getElementById('ia-btn');btn.textContent='Generando...';btn.disabled=true;
+  if(!GROQ_KEY){var e=document.getElementById('ia-err');e.textContent='Agrega tu Groq API Key en la linea GROQ_KEY del codigo.';e.style.display='block';return;}
+  var dxs=[];for(var i=0;i<6;i++){var v=gv('ci'+i);if(v)dxs.push(v);}
+  if(!dxs.length){var e=document.getElementById('ia-err');e.textContent='Ingrese al menos un diagnostico en seccion K primero.';e.style.display='block';return;}
+  var btn=document.getElementById('ia-btn');btn.textContent='Generando...';btn.disabled=true;
   document.getElementById('ia-err').style.display='none';document.getElementById('ia-res').innerHTML='';
   try{
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:'Eres médico especialista en Salud Ocupacional Ecuador. Genera recomendaciones médico-laborales CONCRETAS con EPP, hidratación, pausas, restricciones y seguimiento. Responde SOLO con JSON sin backticks: {"r":["rec1","rec2","rec3","rec4","rec5"]}'},{role:'user',content:'Diagnósticos: '+dxs.join(', ')+'. Aptitud: '+(S.aptitud||'NE')+'. Da 5 recomendaciones.'}],max_tokens:600,temperature:0.4})});
-    const data=await r.json();const text=data.choices?.[0]?.message?.content||'';
-    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());const sugs=parsed.r||[];
+    var r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({
+        model:'llama-3.3-70b-versatile',
+        messages:[
+          {role:'system',content:'Eres medico especialista en Salud Ocupacional Ecuador. Genera recomendaciones medico-laborales CONCRETAS con EPP, hidratacion, pausas, restricciones y seguimiento. Responde SOLO con JSON sin backticks: {"r":["rec1","rec2","rec3","rec4","rec5"]}'},
+          {role:'user',content:'Diagnosticos: '+dxs.join(', ')+'. Aptitud: '+(S.aptitud||'NE')+'. Da 5 recomendaciones.'}
+        ],
+        max_tokens:600,temperature:0.4
+      })
+    });
+    var data=await r.json();
+    var text=data.choices&&data.choices[0]?data.choices[0].message.content:'';
+    text=text.replace(/```json|```/g,'').trim();
+    var parsed=JSON.parse(text);
+    var sugs=parsed.r||[];
     window._ias=sugs;
-    document.getElementById('ia-res').innerHTML=sugs.map((s,i)=>'<div style="display:flex;gap:7px;margin-bottom:6px;background:#fff;border:1px solid #d1fae5;border-radius:6px;padding:7px 10px;align-items:flex-start;"><span style="color:#2a7a4b;font-weight:800;min-width:18px;">'+(i+1)+'.</span><span style="flex:1;font-size:11px;color:#1f2937;line-height:1.5;">'+s+'</span><button onmousedown="insRecom(\''+s.replace(/'/g,"\\'")+'\',true)" style="background:#2a7a4b;color:#fff;border:none;border-radius:4px;padding:3px 9px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;">Usar</button></div>').join('')+'<button onclick="window._ias.forEach(s=>insRecom(s))" style="background:#1e3a5f;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:3px;">Insertar todas</button>';
+    document.getElementById('ia-res').innerHTML=sugs.map(function(s,i){
+      var safe=s.replace(/'/g,"&#39;");
+      return '<div style="display:flex;gap:7px;margin-bottom:6px;background:#fff;border:1px solid #d1fae5;border-radius:6px;padding:7px 10px;align-items:flex-start;">'
+        +'<span style="color:#2a7a4b;font-weight:800;min-width:18px;">'+(i+1)+'.</span>'
+        +'<span style="flex:1;font-size:11px;line-height:1.5;">'+s+'</span>'
+        +'<button onmousedown="insR(\''+safe+'\')" style="background:#2a7a4b;color:#fff;border:none;border-radius:4px;padding:3px 9px;font-size:10px;font-weight:700;cursor:pointer;">Usar</button>'
+        +'</div>';
+    }).join('')
+    +'<button onclick="if(window._ias)window._ias.forEach(function(s){insR(s);})" style="background:#1e3a5f;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;margin-top:3px;">Insertar todas</button>';
   }catch(err){document.getElementById('ia-err').textContent='Error. Verifique su Groq API Key.';document.getElementById('ia-err').style.display='block';}
   btn.textContent='Generar con IA';btn.disabled=false;
 }
 
-// ── PREPARAR IMPRESIÓN ──
-window.onbeforeprint = function(){
-  document.getElementById('print-area').style.display='block';
-  // Empresa
-  const e=S.empSel||{};
-  set('p-inst',e.nombre||'');set('p-ruc',e.ruc||'');set('p-ciiu',e.ciiu||'');set('p-centro',e.dir||'');
-  set('p-hc',v('numHC'));set('p-arch','');
-  // Paciente
-  set('p-a1',v('a1'));set('p-a2',v('a2'));set('p-n1',v('n1'));set('p-n2',v('n2'));
-  set('p-prio',(S.prio||[]).join(', '));
-  set('p-sexo',S.sexo);set('p-fnac',v('fAno')+'/'+v('fMes')+'/'+v('fDia'));set('p-edad',v('edad'));
-  set('p-gs',S.gs);set('p-lat',S.lat);
-  // B
-  set('p-puesto',v('puesto'));set('p-faten',v('fAten'));set('p-fing',v('fIng'));set('p-fult',v('fUlt'));
-  set('p-tipoeval',S.tipoEval||'—');set('p-obsb',v('obsB'));
-  // C
-  set('p-antc',v('antC'));set('p-antf',v('antF'));
-  set('p-transf',S.transf);set('p-trath',S.tratH+(S.tratH==='Sí'?' — '+v('tratHd'):''));
-  set('p-tabt',v('tab-t'));set('p-tabexc',S.tabExC);set('p-tababs',v('tab-abs'));set('p-tabnoc',S.tabNoC);
-  set('p-alct',v('alc-t'));set('p-alcexc',S.alcExC);set('p-alcabs',v('alc-abs'));set('p-alcnoc',S.alcNoC);
-  set('p-actf',v('actF'));set('p-medh',v('medH'));set('p-condp',v('condP'));
-  // D E
-  set('p-enf',v('enf'));
-  set('p-temp',v('temp'));set('p-pa',v('pa'));set('p-fc',v('fc'));set('p-fr',v('fr'));set('p-sat',v('sat'));
-  set('p-peso',v('peso'));set('p-talla',v('talla'));set('p-imc',v('imc'));set('p-perab',v('perab'));
-  // F Regiones
-  let regTxt='';
-  REGIONES_DATA.forEach(r=>{if(S.hallazgos[r]){const desc=document.querySelector('#rd-'+r+' input');regTxt+='<span style="margin-right:12px;"><b>'+r+':</b> '+S.hallazgos[r]+(S.hallazgos[r]==='Patológico'&&desc&&desc.value?' — '+desc.value:'')+'</span>';}});
-  document.getElementById('p-regiones').innerHTML=regTxt||'Sin hallazgos patológicos registrados';
-  set('p-obsf',v('obsF'));
-  // G Factores
-  let rTxt='';Object.entries(S.riesgos).forEach(([k,on])=>{if(on){const parts=k.split('_');rTxt+='<span style="display:inline-block;margin:2px;background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:1px 8px;font-size:7pt;">'+parts[1]+'</span>';}});
-  document.getElementById('p-factores').innerHTML=rTxt||'Ninguno marcado';
-  set('p-actj',v('actJ'));set('p-medprev',v('medPrev'));
-  // H Laboral
-  const lb=document.getElementById('p-lab-body');lb.innerHTML='';
-  const rows=document.querySelectorAll('#lab-body tr');
-  rows.forEach(row=>{
-    const inputs=row.querySelectorAll('input[type=text]');const checks=row.querySelectorAll('input[type=checkbox]');
-    if(inputs[0].value||inputs[1].value){
-      const tr=document.createElement('tr');
-      tr.innerHTML='<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+inputs[0].value+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+inputs[1].value+'</td>'+Array.from(checks).map(c=>'<td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(c.checked?'✓':'')+'</td>').join('')+'<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+(inputs[2]?inputs[2].value:'')+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+(inputs[3]?inputs[3].value:'')+'</td>';
-      lb.appendChild(tr);
-    }
-  });
-  if(!lb.children.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="11" style="border:1px solid #c8dac8;padding:4px;font-size:7pt;color:#aaa;">Sin antecedentes laborales registrados</td>';lb.appendChild(tr);}
-  // J Exámenes
-  const eb=document.getElementById('p-exam-body');eb.innerHTML='';
-  document.querySelectorAll('#exam-body tr').forEach(row=>{
-    const ins=row.querySelectorAll('input');
-    if(ins[0].value){const tr=document.createElement('tr');tr.innerHTML='<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+ins[0].value+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+ins[1].value+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+ins[2].value+'</td>';eb.appendChild(tr);}
-  });
-  if(!eb.children.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="3" style="border:1px solid #c8dac8;padding:4px;font-size:7pt;color:#aaa;"></td>';eb.appendChild(tr);}
-  set('p-obsj',v('obsJ'));
-  // K Dx
-  const db=document.getElementById('p-dx-body');db.innerHTML='';
-  for(let i=0;i<6;i++){
-    const val=v('ci'+i);
-    const row=document.querySelectorAll('#dx-body tr')[i];
-    const cbs=row?row.querySelectorAll('input[type=checkbox]'):[];
-    const tr=document.createElement('tr');
-    const parts=val?val.split(' — '):['',''];
-    tr.innerHTML='<td style="border:1px solid #c8dac8;padding:2px 4px;text-align:center;font-size:7pt;">'+(i+1)+'</td>'
-      +'<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;font-weight:700;color:#2a7a4b;">'+(parts[0]||'')+'</td>'
-      +'<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+(parts[1]||'')+'</td>'
-      +'<td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[0]&&cbs[0].checked?'v':'')+'</td>'
-      +'<td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[1]&&cbs[1].checked?'v':'')+'</td>';
-    db.appendChild(tr);
-  }
-  // L Aptitud
-  ['p-apt-apto','p-apt-obs','p-apt-lim','p-apt-no'].forEach(function(id){document.getElementById(id).classList.remove('marked');});
-  if(S.aptitud==='APTO') document.getElementById('p-apt-apto').classList.add('marked');
-  else if(S.aptitud==='APTO EN OBSERVACION') document.getElementById('p-apt-obs').classList.add('marked');
-  else if(S.aptitud==='APTO CON LIMITACIONES') document.getElementById('p-apt-lim').classList.add('marked');
-  else if(S.aptitud==='NO APTO') document.getElementById('p-apt-no').classList.add('marked');
-  set('p-obsapt',v('obsApt'));
-  set('p-recom',v('recom'));
-  set('p-evalr',S.evalR);
-  set('p-condr',S.condR);
-  set('p-obsn',v('obsN'));
-  set('p-pnombre',v('pnombre'));
-  set('p-pcodigo',v('pcodigo'));
-};
-window.onafterprint=function(){document.getElementById('print-area').style.display='none';};
-function v(id){var el=document.getElementById(id);return el?el.value:'';}
-function set(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'';}
+function gv(id){var el=document.getElementById(id);return el?el.value:'';}
+function sv(id,val){var el=document.getElementById(id);if(el)el.value=val||'';}
 </script>
 </body>
 </html>
