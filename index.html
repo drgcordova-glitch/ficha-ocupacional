@@ -822,25 +822,35 @@ window.onbeforeprint = function(){
   // K Dx
   const db=document.getElementById('p-dx-body');db.innerHTML='';
   for(let i=0;i<6;i++){
-    const val=v('ci'+i);const row=document.querySelectorAll('#dx-body tr')[i];const cbs=row?row.querySelectorAll('input[type=checkbox]'):[];
+    const val=v('ci'+i);
+    const row=document.querySelectorAll('#dx-body tr')[i];
+    const cbs=row?row.querySelectorAll('input[type=checkbox]'):[];
     const tr=document.createElement('tr');
-    tr.innerHTML='<td style="border:1px solid #c8dac8;padding:2px 4px;text-align:center;font-size:7pt;">'+(i+1)+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;font-weight:700;color:#2a7a4b;">'+(val?val.split(—’)[0].trim():’’)+'</td><td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+(val&&val.includes(—’)?val.split(—’)[1].trim():’’)+'</td><td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[0]&&cbs[0].checked?’✓’:’’)+'</td><td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[1]&&cbs[1].checked?’✓’:’’)+'</td>';
+    const parts=val?val.split(' — '):['',''];
+    tr.innerHTML='<td style="border:1px solid #c8dac8;padding:2px 4px;text-align:center;font-size:7pt;">'+(i+1)+'</td>'
+      +'<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;font-weight:700;color:#2a7a4b;">'+(parts[0]||'')+'</td>'
+      +'<td style="border:1px solid #c8dac8;padding:2px 4px;font-size:7pt;">'+(parts[1]||'')+'</td>'
+      +'<td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[0]&&cbs[0].checked?'v':'')+'</td>'
+      +'<td style="border:1px solid #c8dac8;text-align:center;font-size:7pt;">'+(cbs[1]&&cbs[1].checked?'v':'')+'</td>';
     db.appendChild(tr);
   }
   // L Aptitud
-  ['p-apt-apto','p-apt-obs','p-apt-lim','p-apt-no'].forEach(id=>document.getElementById(id).classList.remove('marked'));
+  ['p-apt-apto','p-apt-obs','p-apt-lim','p-apt-no'].forEach(function(id){document.getElementById(id).classList.remove('marked');});
   if(S.aptitud==='APTO') document.getElementById('p-apt-apto').classList.add('marked');
   else if(S.aptitud==='APTO EN OBSERVACION') document.getElementById('p-apt-obs').classList.add('marked');
   else if(S.aptitud==='APTO CON LIMITACIONES') document.getElementById('p-apt-lim').classList.add('marked');
   else if(S.aptitud==='NO APTO') document.getElementById('p-apt-no').classList.add('marked');
   set('p-obsapt',v('obsApt'));
   set('p-recom',v('recom'));
-  set('p-evalr',S.evalR);set('p-condr',S.condR);set('p-obsn',v('obsN'));
-  set('p-pnombre',v('pnombre'));set('p-pcodigo',v('pcodigo'));
+  set('p-evalr',S.evalR);
+  set('p-condr',S.condR);
+  set('p-obsn',v('obsN'));
+  set('p-pnombre',v('pnombre'));
+  set('p-pcodigo',v('pcodigo'));
 };
 window.onafterprint=function(){document.getElementById('print-area').style.display='none';};
-function v(id){const el=document.getElementById(id);return el?el.value:'';}
-function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val||'';}
+function v(id){var el=document.getElementById(id);return el?el.value:'';}
+function set(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'';}
 </script>
 </body>
 </html>
