@@ -55,6 +55,32 @@ td input[type=text]{border:none;background:transparent;padding:2px 3px;font-size
   body{background:#fff;}
   .tab{display:block!important;}
 }
+
+@media print {
+  .hdr,.tabs,.np{display:none!important;}
+  body{background:#fff;font-size:8pt;font-family:Arial,sans-serif;}
+  .wrap{display:none!important;}
+  #parea{display:block!important;}
+  .ppage{page-break-after:always;padding:6mm 8mm;font-size:7.5pt;}
+  .ppage:last-child{page-break-after:avoid;}
+  /* Colores MSP */
+  .pt{background:#7986cb;color:#fff;text-align:center;font-weight:700;font-size:9pt;padding:4px;border:1px solid #5c6bc0;}
+  .psh{background:#81c784;color:#1a3a1a;font-weight:700;font-size:7.5pt;padding:3px 6px;text-transform:uppercase;border:1px solid #66bb6a;}
+  .pssh{background:#c8e6c9;color:#1a3a1a;font-weight:700;font-size:7pt;padding:2px 6px;border-bottom:1px solid #a5d6a7;}
+  .ptable{width:100%;border-collapse:collapse;font-size:7pt;}
+  .ptable th{background:#c8e6c9;border:1px solid #81c784;padding:2px 4px;font-weight:700;text-align:center;font-size:6.5pt;}
+  .ptable td{border:1px solid #c8e6c9;padding:2px 4px;min-height:14px;vertical-align:middle;}
+  .plabel{background:#e8f5e9;font-weight:700;font-size:6.5pt;color:#2a4a2a;}
+  .pval{background:#fff;min-height:14px;}
+  .prow{display:flex;border-top:1px solid #c8e6c9;}
+  .pcell{border-right:1px solid #c8e6c9;padding:2px 5px;min-height:16px;font-size:7.5pt;}
+  .pcell:last-child{border-right:none;}
+  .psec{border:1px solid #81c784;margin-bottom:3px;}
+  .pcheck{display:inline-block;width:9px;height:9px;border:1px solid #555;margin-right:3px;vertical-align:middle;background:#fff;}
+  .pcheck.on{background:#1e3a5f;}
+  .papt{display:inline-block;border:1.5px solid #333;padding:2px 10px;margin-right:6px;font-size:7.5pt;font-weight:700;}
+  .papt.on{background:#1e3a5f;color:#fff;}
+}
 </style>
 </head>
 <body>
@@ -997,6 +1023,420 @@ async function genIA(){
 
 function gv(id){var el=document.getElementById(id);return el?el.value:'';}
 function sv(id,val){var el=document.getElementById(id);if(el)el.value=val||'';}
+
+window.onbeforeprint = function() {
+  document.getElementById('parea').style.display = 'block';
+  var e = S.empSel || {};
+  pt('p-inst', e.nom||''); pt('p-ruc', e.ruc||''); pt('p-ciiu', e.ciiu||''); pt('p-centro', e.dir||'');
+  pt('p-hc', gv('numHC'));
+  pt('p-a1', gv('a1')); pt('p-a2', gv('a2')); pt('p-n1', gv('n1')); pt('p-n2', gv('n2'));
+  pt('p-prio', (S.prio||[]).join(', ') || '—');
+  pt('p-sexo', S.sexo||'—');
+  pt('p-fnac', (gv('fAno')||'aaaa')+'/'+(gv('fMes')||'mm')+'/'+(gv('fDia')||'dd'));
+  pt('p-edad', gv('edad'));
+  pt('p-gs', S.gs||'—');
+  pt('p-lat', S.lat||'—');
+  pt('p-puesto', gv('puesto'));
+  pt('p-faten', gv('fAten'));
+  pt('p-fing', gv('fIng'));
+  pt('p-fult', gv('fUlt'));
+  // Tipo evaluacion
+  ['I','P','R','S'].forEach(function(k){ var el=document.getElementById('papt-'+k); if(el) el.className='papt'; });
+  var teMap = {Ingreso:'I',Periodico:'P','Periódico':'P',Reingreso:'R',Retiro:'S'};
+  var teKey = teMap[S.tipoEval];
+  if(teKey){ var el=document.getElementById('papt-'+teKey); if(el) el.className='papt on'; }
+  pt('p-obsb', gv('obsB'));
+  pt('p-antc', gv('antC'));
+  pt('p-antf', gv('antF'));
+  pt('p-transf', S.transf||'—');
+  pt('p-trath', S.tratH==='Si' ? 'Si — '+(gv('tratHd')||'') : (S.tratH||'—'));
+  pt('p-tabt', gv('tab-t')); pt('p-tabexc', S.tabExC||'—'); pt('p-tababs', gv('tab-abs')); pt('p-tabnoc', S.tabNoC||'—');
+  pt('p-alct', gv('alc-t')); pt('p-alcexc', S.alcExC||'—'); pt('p-alcabs', gv('alc-abs')); pt('p-alcnoc', S.alcNoC||'—');
+  pt('p-actf', gv('actF')); pt('p-medh', gv('medH')); pt('p-condp', gv('condP'));
+  pt('p-enf', gv('enf'));
+  pt('p-temp', gv('temp')); pt('p-pa', gv('pa')); pt('p-fc', gv('fc')); pt('p-fr', gv('fr')); pt('p-sat', gv('sat'));
+  pt('p-peso', gv('peso')); pt('p-talla', gv('talla')); pt('p-imc', gv('imc')); pt('p-perab', gv('perab'));
+  // Regiones
+  var rTxt = '';
+  ['1.Piel','2.Ojos','3.Oido','4.Orofaringe','5.Nariz','6.Cuello','7.Torax','8.Abdomen','9.Columna','10.Pelvis','11.Extremidades','12.Neurologico'].forEach(function(r){
+    if(S.halls[r]){
+      var desc = document.querySelector('#rd-'+r+' input');
+      rTxt += '<b>'+r+':</b> '+S.halls[r]+(S.halls[r]==='Patologico'&&desc&&desc.value?' — '+desc.value:'')+' &nbsp; ';
+    }
+  });
+  document.getElementById('p-regiones').innerHTML = rTxt || 'Sin hallazgos patológicos registrados';
+  pt('p-obsf', gv('obsF'));
+  // Factores de riesgo
+  var fb = document.getElementById('p-factores-body'); fb.innerHTML = '';
+  var cats = Object.keys(FACTS);
+  cats.forEach(function(cat){
+    var activos = FACTS[cat].filter(function(item){ return S.risks[cat+item]; });
+    if(activos.length){
+      activos.forEach(function(item, idx){
+        var tr = document.createElement('tr');
+        tr.innerHTML = (idx===0?'<td rowspan="'+activos.length+'" style="background:#e8f5e9;font-weight:700;vertical-align:middle;">'+cat+'</td>':'')
+          +'<td>'+item+'</td><td style="text-align:center;">X</td><td></td><td></td>'
+          +(idx===0?'<td rowspan="'+activos.length+'" id="mp-'+cat+'">'+gv('medPrev')+'</td>':'');
+        fb.appendChild(tr);
+      });
+    }
+  });
+  if(!fb.children.length){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="6" style="color:#aaa;padding:4px;">Sin factores de riesgo seleccionados</td>';
+    fb.appendChild(tr);
+  }
+  pt('p-actj', gv('actJ'));
+  // Laboral
+  var lb = document.getElementById('p-lab-body'); lb.innerHTML = '';
+  var labRows = document.querySelectorAll('#lab-body tr');
+  labRows.forEach(function(row){
+    var ins = row.querySelectorAll('input[type=text]');
+    var cbs = row.querySelectorAll('input[type=checkbox]');
+    if(ins[0] && ins[0].value){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+ins[0].value+'</td><td>'+ins[1].value+'</td>'
+        +'<td style="text-align:center;">'+(cbs[0]&&cbs[0].checked?'X':'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[1]&&cbs[1].checked?'X':'')+'</td>'
+        +'<td>'+(ins[2]?ins[2].value:'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[2]&&cbs[2].checked?'X':'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[3]&&cbs[3].checked?'X':'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[4]&&cbs[4].checked?'X':'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[5]&&cbs[5].checked?'X':'')+'</td>'
+        +'<td style="text-align:center;">'+(cbs[6]&&cbs[6].checked?'X':'')+'</td>'
+        +'<td>'+(ins[3]?ins[3].value:'')+'</td>';
+      lb.appendChild(tr);
+    }
+  });
+  if(!lb.children.length){var tr=document.createElement('tr');tr.innerHTML='<td colspan="11" style="color:#aaa;padding:3px;">—</td>';lb.appendChild(tr);}
+  // Examenes
+  var eb = document.getElementById('p-exam-body'); eb.innerHTML = '';
+  var examRows = document.querySelectorAll('#exam-body tr');
+  examRows.forEach(function(row){
+    var ins = row.querySelectorAll('input');
+    if(ins[0]&&ins[0].value){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+ins[0].value+'</td><td>'+ins[1].value+'</td><td>'+ins[2].value+'</td>';
+      eb.appendChild(tr);
+    }
+  });
+  if(!eb.children.length){var tr=document.createElement('tr');tr.innerHTML='<td colspan="3" style="min-height:12px;"> </td>';eb.appendChild(tr);}
+  // Agregar filas vacias hasta 5
+  while(eb.children.length<5){var tr=document.createElement('tr');tr.innerHTML='<td style="min-height:12px;"> </td><td> </td><td> </td>';eb.appendChild(tr);}
+  pt('p-obsj', gv('obsJ'));
+  // Dx
+  var db = document.getElementById('p-dx-body'); db.innerHTML = '';
+  for(var i=0;i<6;i++){
+    var val = gv('ci'+i);
+    var row = document.querySelectorAll('#dx-body tr')[i];
+    var cbs = row ? row.querySelectorAll('input[type=checkbox]') : [];
+    var parts = val ? val.split(' - ') : ['',''];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="text-align:center;font-weight:700;color:#555;">'+(i+1)+'</td>'
+      +'<td style="font-weight:700;color:#2a7a4b;">'+(parts[0]||'')+'</td>'
+      +'<td>'+(parts.slice(1).join(' - ')||'')+'</td>'
+      +'<td style="text-align:center;">'+(cbs[0]&&cbs[0].checked?'X':'')+'</td>'
+      +'<td style="text-align:center;">'+(cbs[1]&&cbs[1].checked?'X':'')+'</td>';
+    db.appendChild(tr);
+  }
+  // Aptitud
+  ['p-apt-A','p-apt-O','p-apt-L','p-apt-N'].forEach(function(id){var el=document.getElementById(id);if(el)el.className='papt';});
+  if(S.aptitud==='APTO') chk('p-apt-A');
+  else if(S.aptitud==='APTO EN OBSERVACION') chk('p-apt-O');
+  else if(S.aptitud==='APTO CON LIMITACIONES') chk('p-apt-L');
+  else if(S.aptitud==='NO APTO') chk('p-apt-N');
+  pt('p-obsapt', gv('obsApt'));
+  pt('p-recom', gv('recom'));
+  // Retiro checkboxes
+  chkBox('pc-evS', S.evalR==='Si'); chkBox('pc-evN', S.evalR==='No');
+  chkBox('pc-crS', S.condR==='Si'); chkBox('pc-crN', S.condR==='No');
+  pt('p-obsn', gv('obsN'));
+  pt('p-pnom', gv('pnom')); pt('p-pcod', gv('pcod'));
+};
+window.onafterprint = function() { document.getElementById('parea').style.display='none'; };
+function pt(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'';}
+function chk(id){var el=document.getElementById(id);if(el)el.className='papt on';}
+function chkBox(id,on){var el=document.getElementById(id);if(el)el.className='pcheck'+(on?' on':'');}
 </script>
+
+<!-- AREA DE IMPRESION FORMATO MSP OFICIAL -->
+<div id="parea" style="display:none;">
+
+<!-- PAGINA 1 -->
+<div class="ppage">
+  <div class="pt">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL<br><span style="font-size:7pt;font-weight:400;">SNS-MSP/HCU-form.123/2025</span></div>
+
+  <div class="psec" style="margin-top:3px;">
+    <div class="psh">A. DATOS DEL ESTABLECIMIENTO - DATOS DEL USUARIO</div>
+    <table class="ptable">
+      <tr>
+        <td class="plabel" style="width:28%;">INSTITUCIÓN DEL SISTEMA</td>
+        <td class="plabel" style="width:14%;">RUC</td>
+        <td class="plabel" style="width:8%;">CIIU</td>
+        <td class="plabel" style="width:26%;">ESTABLECIMIENTO/CENTRO DE TRABAJO</td>
+        <td class="plabel" style="width:12%;">Nº HISTORIA CLÍNICA</td>
+        <td class="plabel" style="width:12%;">Nº ARCHIVO</td>
+      </tr>
+      <tr>
+        <td class="pval" id="p-inst"></td>
+        <td class="pval" id="p-ruc"></td>
+        <td class="pval" id="p-ciiu"></td>
+        <td class="pval" id="p-centro"></td>
+        <td class="pval" id="p-hc"></td>
+        <td class="pval"></td>
+      </tr>
+      <tr>
+        <td class="plabel">PRIMER APELLIDO</td>
+        <td class="plabel" colspan="2">SEGUNDO APELLIDO</td>
+        <td class="plabel">PRIMER NOMBRE</td>
+        <td class="plabel" colspan="2">SEGUNDO NOMBRE</td>
+      </tr>
+      <tr>
+        <td class="pval" id="p-a1"></td>
+        <td class="pval" colspan="2" id="p-a2"></td>
+        <td class="pval" id="p-n1"></td>
+        <td class="pval" colspan="2" id="p-n2"></td>
+      </tr>
+    </table>
+    <div style="display:flex;border-top:1px solid #c8e6c9;flex-wrap:wrap;font-size:7pt;">
+      <div style="flex:2.5;padding:2px 5px;border-right:1px solid #c8e6c9;">
+        <span class="plabel">GRUPO DE ATENCIÓN PRIORITARIA: </span>
+        <span id="p-prio"></span>
+      </div>
+      <div style="flex:0.8;padding:2px 5px;border-right:1px solid #c8e6c9;">
+        <span class="plabel">SEXO: </span><span id="p-sexo" style="font-weight:700;"></span>
+      </div>
+      <div style="flex:1.2;padding:2px 5px;border-right:1px solid #c8e6c9;">
+        <span class="plabel">F.NAC: </span><span id="p-fnac"></span>
+        <span class="plabel"> EDAD: </span><span id="p-edad" style="font-weight:700;"></span>
+      </div>
+      <div style="flex:0.8;padding:2px 5px;border-right:1px solid #c8e6c9;">
+        <span class="plabel">GS: </span><span id="p-gs" style="font-weight:700;font-size:9pt;color:#dc2626;"></span>
+      </div>
+      <div style="flex:1;padding:2px 5px;">
+        <span class="plabel">LATERALIDAD: </span><span id="p-lat"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">B. MOTIVO DE CONSULTA</div>
+    <table class="ptable">
+      <tr>
+        <td class="plabel" style="width:55%;">PUESTO DE TRABAJO CIUO</td>
+        <td class="plabel">FECHA DE ATENCIÓN aaaa/mm/dd</td>
+      </tr>
+      <tr><td class="pval" id="p-puesto"></td><td class="pval" id="p-faten"></td></tr>
+      <tr>
+        <td class="plabel">FECHA DE INGRESO AL TRABAJO aaaa/mm/dd</td>
+        <td class="plabel">FECHA ÚLTIMO DÍA LABORAL aaaa/mm/dd</td>
+      </tr>
+      <tr><td class="pval" id="p-fing"></td><td class="pval" id="p-fult"></td></tr>
+    </table>
+    <div style="padding:3px 6px;background:#e8f5e9;border-top:1px solid #c8e6c9;font-size:7pt;">
+      <b>TIPO DE EVALUACIÓN: </b>
+      <span class="papt" id="papt-I">INGRESO</span>
+      <span class="papt" id="papt-P">PERIÓDICO</span>
+      <span class="papt" id="papt-R">REINGRESO</span>
+      <span class="papt" id="papt-S">RETIRO</span>
+    </div>
+    <div style="padding:2px 5px;min-height:14px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>Observación: </b><span id="p-obsb"></span></div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">C. ANTECEDENTES PERSONALES</div>
+    <div class="pssh">ANTECEDENTES CLÍNICOS Y QUIRÚRGICOS</div>
+    <div style="padding:3px 6px;min-height:18px;font-size:7.5pt;" id="p-antc"></div>
+    <div class="pssh">ANTECEDENTES FAMILIARES</div>
+    <div style="padding:3px 6px;min-height:18px;font-size:7.5pt;" id="p-antf"></div>
+    <div style="padding:3px 6px;font-size:7pt;border-top:1px solid #c8e6c9;display:flex;gap:16px;flex-wrap:wrap;">
+      <span><b>Autoriza transfusiones: </b><span id="p-transf"></span></span>
+      <span><b>Tratamiento hormonal: </b><span id="p-trath"></span></span>
+    </div>
+    <div class="pssh" style="margin-top:4px;">CONSUMO DE SUSTANCIAS / ESTILO DE VIDA</div>
+    <table class="ptable">
+      <tr><th>Sustancia</th><th>Tiempo consumo</th><th>Ex consumidor</th><th>T. Abstinencia</th><th>No consume</th><th>Actividad Física</th><th>Medicación Habitual</th><th>Cond. Preexistente</th></tr>
+      <tr>
+        <td style="background:#e8f5e9;font-weight:700;">TABACO</td>
+        <td id="p-tabt"></td><td id="p-tabexc"></td><td id="p-tababs"></td><td id="p-tabnoc"></td>
+        <td rowspan="2" id="p-actf"></td><td rowspan="2" id="p-medh"></td><td rowspan="2" id="p-condp"></td>
+      </tr>
+      <tr>
+        <td style="background:#e8f5e9;font-weight:700;">ALCOHOL</td>
+        <td id="p-alct"></td><td id="p-alcexc"></td><td id="p-alcabs"></td><td id="p-alcnoc"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="psec">
+    <div class="psh">D. ENFERMEDAD O PROBLEMA ACTUAL</div>
+    <div style="padding:3px 6px;min-height:22px;font-size:7.5pt;" id="p-enf"></div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">E. CONSTANTES VITALES Y ANTROPOMETRÍA</div>
+    <table class="ptable">
+      <tr>
+        <th>TEMPERATURA (°C)</th><th>PRESIÓN ARTERIAL (mmHg)</th><th>FREC. CARDÍACA (Lat/min)</th>
+        <th>FREC. RESPIRATORIA (fr/min)</th><th>SATURACIÓN O2 (%)</th>
+        <th>PESO (Kg)</th><th>TALLA (cm)</th><th>IMC (kg/m2)</th><th>PERÍMETRO ABDOMINAL (cm)</th>
+      </tr>
+      <tr>
+        <td class="pval" id="p-temp"></td><td class="pval" id="p-pa"></td>
+        <td class="pval" id="p-fc"></td><td class="pval" id="p-fr"></td>
+        <td class="pval" id="p-sat"></td><td class="pval" id="p-peso"></td>
+        <td class="pval" id="p-talla"></td><td class="pval" id="p-imc"></td>
+        <td class="pval" id="p-perab"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="psec">
+    <div class="psh">F. EXAMEN FÍSICO REGIONAL</div>
+    <div style="padding:3px 6px;font-size:7pt;border-bottom:1px solid #c8e6c9;"><i>SI EXISTE EVIDENCIA DE PATOLOGÍA MARCAR CON "X" Y DESCRIBIR EN LA SIGUIENTE SECCIÓN</i></div>
+    <div id="p-regiones" style="padding:4px 6px;font-size:7.5pt;min-height:20px;"></div>
+    <div style="padding:2px 5px;min-height:14px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>Observación: </b><span id="p-obsf"></span></div>
+  </div>
+</div>
+
+<!-- PAGINA 2 -->
+<div class="ppage">
+  <div class="pt">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL — PÁGINA 2</div>
+
+  <div class="psec" style="margin-top:3px;">
+    <div class="psh">G. FACTORES DE RIESGO DEL TRABAJO ACTUAL</div>
+    <table class="ptable">
+      <tr>
+        <th style="width:12%;">CATEGORÍA</th>
+        <th style="width:28%;">FACTOR</th>
+        <th style="width:8%;">Puesto 1</th>
+        <th style="width:8%;">Puesto 2</th>
+        <th style="width:8%;">Puesto 3</th>
+        <th style="width:36%;">MEDIDAS PREVENTIVAS</th>
+      </tr>
+      <tbody id="p-factores-body"></tbody>
+    </table>
+    <div style="padding:2px 5px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>Actividades en la jornada: </b><span id="p-actj"></span></div>
+  </div>
+
+  <div class="psec" style="margin-top:4px;">
+    <div class="psh">H. ACTIVIDAD LABORAL / INCIDENTES / ACCIDENTES / ENFERMEDADES OCUPACIONALES</div>
+    <div class="pssh">ANTECEDENTES DE EMPLEOS ANTERIORES Y/O TRABAJO ACTUAL</div>
+    <table class="ptable">
+      <tr>
+        <th rowspan="2" style="width:18%;">CENTRO DE TRABAJO</th>
+        <th rowspan="2" style="width:22%;">ACTIVIDADES QUE DESEMPEÑABA</th>
+        <th colspan="2">TRABAJO</th>
+        <th rowspan="2">TIEMPO</th>
+        <th colspan="3">ACCIDENTES / INCIDENTES</th>
+        <th colspan="3">CALIFICADO IESS</th>
+        <th rowspan="2" style="width:12%;">ESPECIFICAR</th>
+      </tr>
+      <tr>
+        <th>ANT.</th><th>ACT.</th>
+        <th>INC.</th><th>ACC.</th><th>ENF.PROF.</th>
+        <th>SI</th><th>NO</th><th>FECHA</th>
+      </tr>
+      <tbody id="p-lab-body"></tbody>
+    </table>
+  </div>
+
+  <div class="psec" style="margin-top:4px;">
+    <div class="psh">I. ACTIVIDADES EXTRA LABORALES</div>
+    <table class="ptable">
+      <tr><th style="width:70%;">TIPO DE ACTIVIDAD / DESCRIPCIÓN</th><th>FECHA aaaa/mm/dd</th></tr>
+      <tr><td class="pval" style="min-height:14px;"></td><td class="pval"></td></tr>
+      <tr><td class="pval" style="min-height:14px;"></td><td class="pval"></td></tr>
+      <tr><td class="pval" style="min-height:14px;"></td><td class="pval"></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- PAGINA 3 -->
+<div class="ppage">
+  <div class="pt">FORMULARIO DE EVALUACIÓN MÉDICA OCUPACIONAL — PÁGINA 3</div>
+
+  <div class="psec" style="margin-top:3px;">
+    <div class="psh">J. RESULTADOS DE EXÁMENES GENERALES Y ESPECÍFICOS DE ACUERDO AL RIESGO Y PUESTO DE TRABAJO</div>
+    <table class="ptable">
+      <tr><th style="width:30%;">NOMBRE DEL EXAMEN</th><th style="width:15%;">FECHA aaaa/mm/dd</th><th>RESULTADOS</th></tr>
+      <tbody id="p-exam-body"></tbody>
+    </table>
+    <div style="padding:2px 5px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>OBSERVACIONES: </b><span id="p-obsj"></span></div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">K. DIAGNÓSTICO &nbsp;&nbsp;&nbsp; PRE: PRESUNTIVO &nbsp;&nbsp; DEF: DEFINITIVO</div>
+    <table class="ptable">
+      <tr>
+        <th style="width:28px;">#</th>
+        <th style="width:16%;">CIE-10</th>
+        <th>DESCRIPCIÓN</th>
+        <th style="width:45px;text-align:center;">PRE</th>
+        <th style="width:45px;text-align:center;">DEF</th>
+      </tr>
+      <tbody id="p-dx-body"></tbody>
+    </table>
+  </div>
+
+  <div class="psec">
+    <div class="psh">L. APTITUD MÉDICA PARA EL TRABAJO</div>
+    <div style="padding:5px 8px;border-top:1px solid #c8e6c9;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <span class="papt" id="p-apt-A">APTO</span>
+      <span class="papt" id="p-apt-O">APTO EN OBSERVACIÓN</span>
+      <span class="papt" id="p-apt-L">APTO CON LIMITACIONES</span>
+      <span class="papt" id="p-apt-N">NO APTO</span>
+    </div>
+    <div style="padding:2px 5px;min-height:14px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>OBSERVACIONES: </b><span id="p-obsapt"></span></div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">M. RECOMENDACIONES Y/O TRATAMIENTO</div>
+    <div style="padding:4px 6px;min-height:40px;font-size:7.5pt;white-space:pre-line;" id="p-recom"></div>
+  </div>
+
+  <div class="psec">
+    <div class="psh">N. RETIRO (EVALUACIÓN)</div>
+    <div style="display:flex;border-top:1px solid #c8e6c9;">
+      <div style="flex:1;padding:3px 6px;font-size:7.5pt;border-right:1px solid #c8e6c9;">
+        <b>SE REALIZA LA EVALUACIÓN: </b>
+        <span class="pcheck" id="pc-evS"></span>SI &nbsp;
+        <span class="pcheck" id="pc-evN"></span>NO
+      </div>
+      <div style="flex:1;padding:3px 6px;font-size:7.5pt;">
+        <b>LA CONDICIÓN DE SALUD ESTÁ RELACIONADA CON EL TRABAJO: </b>
+        <span class="pcheck" id="pc-crS"></span>SI &nbsp;
+        <span class="pcheck" id="pc-crN"></span>NO
+      </div>
+    </div>
+    <div style="padding:2px 5px;min-height:12px;font-size:7.5pt;border-top:1px solid #c8e6c9;"><b>Observación: </b><span id="p-obsn"></span></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:4px;margin-top:4px;">
+    <div class="psec" style="margin-bottom:0;">
+      <div class="psh">O. DATOS DEL PROFESIONAL</div>
+      <table class="ptable">
+        <tr>
+          <th style="width:40%;">NOMBRES Y APELLIDOS DEL PROFESIONAL</th>
+          <th style="width:25%;">CÓDIGO MÉDICO</th>
+          <th>FIRMA Y SELLO</th>
+        </tr>
+        <tr>
+          <td class="pval" style="min-height:28px;" id="p-pnom"></td>
+          <td class="pval" id="p-pcod"></td>
+          <td class="pval"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="psec" style="margin-bottom:0;">
+      <div class="psh">P. FIRMA DEL TRABAJADOR</div>
+      <div style="min-height:44px;border-top:1px solid #c8e6c9;"></div>
+    </div>
+  </div>
+  <div style="margin-top:4px;font-size:6.5pt;color:#555;text-align:right;">SNS-MSP/HCU-form.123/2025 &nbsp;|&nbsp; Evaluación Médica Ocupacional</div>
+</div>
+
+</div><!-- fin parea -->
+
 </body>
 </html>
