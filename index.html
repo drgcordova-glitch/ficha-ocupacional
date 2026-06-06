@@ -81,6 +81,80 @@ td input[type=text]{border:none;background:transparent;padding:2px 3px;font-size
   .papt{display:inline-block;border:1.5px solid #333;padding:2px 10px;margin-right:6px;font-size:7.5pt;font-weight:700;}
   .papt.on{background:#1e3a5f;color:#fff;}
 }
+
+/* Certificado paciente */
+#cert-area { display:none; }
+@media print {
+  #cert-area.printing {
+    display:block !important;
+  }
+  #cert-area.printing ~ * { display:none !important; }
+}
+.cert-page {
+  font-family: Arial, sans-serif;
+  font-size: 9pt;
+  padding: 12mm 15mm;
+  max-width: 210mm;
+  margin: 0 auto;
+}
+.cert-title {
+  background: #7986cb;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  font-size: 11pt;
+  padding: 6px;
+  border: 1px solid #5c6bc0;
+  margin-bottom: 3px;
+}
+.cert-sec {
+  border: 1px solid #81c784;
+  margin-bottom: 4px;
+}
+.cert-sh {
+  background: #81c784;
+  color: #1a3a1a;
+  font-weight: 700;
+  font-size: 8pt;
+  padding: 3px 8px;
+  text-transform: uppercase;
+}
+.cert-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+}
+.cert-table th {
+  background: #c8e6c9;
+  border: 1px solid #81c784;
+  padding: 3px 6px;
+  font-weight: 700;
+  font-size: 7.5pt;
+}
+.cert-table td {
+  border: 1px solid #c8e6c9;
+  padding: 3px 6px;
+  min-height: 16px;
+}
+.cert-label { background: #e8f5e9; font-weight: 700; font-size: 7.5pt; }
+.cert-val { background: #fff; }
+.cert-apt {
+  display: inline-block;
+  border: 2px solid #333;
+  padding: 3px 14px;
+  margin-right: 8px;
+  font-weight: 700;
+  font-size: 9pt;
+}
+.cert-apt.on { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+.cert-legal {
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  padding: 6px 10px;
+  font-size: 7.5pt;
+  margin-top: 4px;
+  line-height: 1.5;
+}
 </style>
 </head>
 <body>
@@ -435,7 +509,7 @@ td input[type=text]{border:none;background:transparent;padding:2px 3px;font-size
     </div>
   </div>
   <div style="text-align:center;margin:18px 0 24px;">
-    <button class="btn-green" onclick="window.print()" style="padding:12px 36px;font-size:14px;">🖨 Imprimir / Exportar PDF</button>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"><button class="btn-green" onclick="window.print()" style="padding:12px 36px;font-size:14px;">🖨 Ficha Completa MSP</button><button class="btn-green" onclick="imprimirCertificado()" style="padding:12px 36px;font-size:14px;background:#7c3aed;">📄 Certificado para Paciente</button></div>
   </div>
 </div>
 
@@ -1157,6 +1231,58 @@ window.onafterprint = function() { document.getElementById('parea').style.displa
 function pt(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'';}
 function chk(id){var el=document.getElementById(id);if(el)el.className='papt on';}
 function chkBox(id,on){var el=document.getElementById(id);if(el)el.className='pcheck'+(on?' on':'');}
+
+function imprimirCertificado() {
+  // Llenar datos del certificado
+  var e = S.empSel || {};
+  ct('c-inst', e.nom||'');
+  ct('c-ruc', e.ruc||'');
+  ct('c-ciiu', e.ciiu||'');
+  ct('c-centro', e.dir||'');
+  ct('c-hc', gv('numHC'));
+  ct('c-a1', gv('a1'));
+  ct('c-a2', gv('a2'));
+  ct('c-nom', gv('n1')+' '+gv('n2'));
+  ct('c-sexo', S.sexo||'');
+  ct('c-puesto', gv('puesto'));
+  ct('c-fecha', gv('fAten'));
+  ct('c-eval', S.tipoEval||'');
+  // Aptitud
+  ['c-apt-A','c-apt-O','c-apt-L','c-apt-N'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.className='cert-apt';
+  });
+  if(S.aptitud==='APTO') ck('c-apt-A');
+  else if(S.aptitud==='APTO EN OBSERVACION') ck('c-apt-O');
+  else if(S.aptitud==='APTO CON LIMITACIONES') ck('c-apt-L');
+  else if(S.aptitud==='NO APTO') ck('c-apt-N');
+  ct('c-obsapt', gv('obsApt'));
+  ct('c-recom', gv('recom'));
+  ct('c-pnom', gv('pnom'));
+  ct('c-pcod', gv('pcod'));
+
+  // Ocultar todo excepto certificado
+  var certArea = document.getElementById('cert-area');
+  var parea = document.getElementById('parea');
+  var hdr = document.querySelector('.hdr');
+  var tabs = document.querySelector('.tabs');
+  var wrap = document.querySelector('.wrap');
+
+  certArea.style.display = 'block';
+  if(parea) parea.style.display = 'none';
+  if(hdr) hdr.style.display = 'none';
+  if(tabs) tabs.style.display = 'none';
+  if(wrap) wrap.style.display = 'none';
+
+  window.print();
+
+  // Restaurar
+  certArea.style.display = 'none';
+  if(hdr) hdr.style.display = '';
+  if(tabs) tabs.style.display = '';
+  if(wrap) wrap.style.display = '';
+}
+function ct(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'';}
+function ck(id){var el=document.getElementById(id);if(el)el.className='cert-apt on';}
 </script>
 
 <!-- AREA DE IMPRESION FORMATO MSP OFICIAL -->
@@ -1437,6 +1563,117 @@ function chkBox(id,on){var el=document.getElementById(id);if(el)el.className='pc
 </div>
 
 </div><!-- fin parea -->
+
+
+<!-- CERTIFICADO PARA EL PACIENTE -->
+<div id="cert-area">
+<div class="cert-page">
+  <div class="cert-title">
+    CERTIFICADO — EVALUACIÓN MÉDICA OCUPACIONAL<br>
+    <span style="font-size:8pt;font-weight:400;">SNS-MSP/HCU-form.123/2025</span>
+  </div>
+
+  <div class="cert-sec">
+    <div class="cert-sh">A. DATOS DEL ESTABLECIMIENTO — DATOS DEL USUARIO</div>
+    <table class="cert-table">
+      <tr>
+        <td class="cert-label" style="width:22%;">INSTITUCIÓN</td>
+        <td class="cert-val" id="c-inst" style="width:28%;"></td>
+        <td class="cert-label" style="width:10%;">RUC</td>
+        <td class="cert-val" id="c-ruc" style="width:15%;"></td>
+        <td class="cert-label" style="width:10%;">CIIU</td>
+        <td class="cert-val" id="c-ciiu"></td>
+      </tr>
+      <tr>
+        <td class="cert-label">ESTABLECIMIENTO</td>
+        <td class="cert-val" id="c-centro" colspan="3"></td>
+        <td class="cert-label">Nº FORMULARIO</td>
+        <td class="cert-val" id="c-hc"></td>
+      </tr>
+      <tr>
+        <td class="cert-label">PRIMER APELLIDO</td>
+        <td class="cert-val" id="c-a1"></td>
+        <td class="cert-label">SEGUNDO APELLIDO</td>
+        <td class="cert-val" id="c-a2"></td>
+        <td class="cert-label">NOMBRES</td>
+        <td class="cert-val" id="c-nom"></td>
+      </tr>
+      <tr>
+        <td class="cert-label">SEXO</td>
+        <td class="cert-val" id="c-sexo"></td>
+        <td class="cert-label">PUESTO DE TRABAJO</td>
+        <td class="cert-val" id="c-puesto" colspan="3"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="cert-sec">
+    <div class="cert-sh">B. DATOS GENERALES</div>
+    <table class="cert-table">
+      <tr>
+        <td class="cert-label" style="width:20%;">FECHA DE EMISIÓN</td>
+        <td class="cert-val" id="c-fecha" style="width:25%;"></td>
+        <td class="cert-label" style="width:15%;">EVALUACIÓN</td>
+        <td class="cert-val" id="c-eval" colspan="3"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="cert-sec">
+    <div class="cert-sh">C. APTITUD MÉDICA PARA EL TRABAJO</div>
+    <div style="padding:5px 8px;font-size:8pt;border-bottom:1px solid #c8e6c9;font-style:italic;">
+      Después de la valoración médica ocupacional se certifica que la persona en mención, es calificada como:
+    </div>
+    <div style="padding:8px 10px;border-bottom:1px solid #c8e6c9;">
+      <span class="cert-apt" id="c-apt-A">APTO</span>
+      <span class="cert-apt" id="c-apt-O">APTO EN OBSERVACIÓN</span>
+      <span class="cert-apt" id="c-apt-L">APTO CON LIMITACIONES</span>
+      <span class="cert-apt" id="c-apt-N">NO APTO</span>
+    </div>
+    <div style="padding:3px 8px;font-size:8pt;">
+      <b>DETALLE DE OBSERVACIONES: </b><span id="c-obsapt"></span>
+    </div>
+  </div>
+
+  <div class="cert-sec">
+    <div class="cert-sh">D. RECOMENDACIONES / OBSERVACIONES</div>
+    <div style="padding:5px 8px;min-height:50px;font-size:8pt;white-space:pre-line;" id="c-recom"></div>
+  </div>
+
+  <div class="cert-legal">
+    Con este documento certifico que el trabajador se ha sometido a la evaluación médica requerida para 
+    (el ingreso / la ejecución / el reingreso y retiro) al puesto laboral y se le ha informado sobre los riesgos 
+    relacionados con el trabajo emitiendo recomendaciones relacionadas con su estado de salud.<br><br>
+    <i>La presente certificación se expide con base en el formulario de Evaluación Ocupacional, 
+    el cual tiene carácter de confidencial.</i>
+  </div>
+
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:6px;">
+    <div class="cert-sec" style="margin-bottom:0;">
+      <div class="cert-sh">E. DATOS DEL PROFESIONAL</div>
+      <table class="cert-table">
+        <tr>
+          <th style="width:35%;">NOMBRE Y APELLIDO</th>
+          <th style="width:30%;">CÓDIGO MÉDICO</th>
+          <th>FIRMA Y SELLO</th>
+        </tr>
+        <tr>
+          <td class="cert-val" style="min-height:35px;" id="c-pnom"></td>
+          <td class="cert-val" id="c-pcod"></td>
+          <td class="cert-val"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="cert-sec" style="margin-bottom:0;">
+      <div class="cert-sh">F. FIRMA DEL USUARIO</div>
+      <div style="min-height:50px;border-top:1px solid #c8e6c9;"></div>
+    </div>
+  </div>
+  <div style="margin-top:6px;font-size:7pt;color:#555;text-align:right;">
+    SNS-MSP/HCU-form.123/2025 &nbsp;|&nbsp; Certificado Evaluación Médica Ocupacional
+  </div>
+</div>
+</div>
 
 </body>
 </html>
